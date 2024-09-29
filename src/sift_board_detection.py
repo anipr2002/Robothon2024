@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+'''
+    @file board_detection.py
+    @authors Shubham Joshi (shubham.joshi@study.thws.de)
+    @brief Program to detect the taskboard
+    @version 0.1
+    @date 2023-03-29
+
+    @copyright Copyright (c) 2023
+'''
 import cv2
 import numpy as np
 import math

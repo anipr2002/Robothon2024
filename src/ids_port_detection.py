@@ -1,6 +1,7 @@
 '''
     @file triangle_lab.py
     @authors Shubham Joshi (shubham.joshi@study.thws.de),
+             Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)
     @brief Program to detect ports
     @version 0.1
 
