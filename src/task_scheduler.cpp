@@ -1,277 +1,15 @@
 // /**
 //  * @file task_board_scheduler.cpp
-//  * @authors Adrian Müller (adrian.mueller@study.thws.de), 
-//  *          Maximilian Hornauer (maximilian.hornauer@study.thws.de),
-//  *          Usama Ali (usama.ali@study.thws.de)
+//  * @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)\
+                Shubham Joshi(shubham.joshi@study.thws.de)\
+                Medhansh Rath(medhansh.rath@study.thws.de)
 //  * @brief Program to schedule tasks
 //  * @version 0.1
 //  * @date 2023-04-11
-//  * 
+//  *
 //  * @copyright Copyright (c) 2023
-//  * 
+//  *
 //  */
-
-// #include <ros/ros.h>
-// #include <iostream>
-// #include <fstream>
-// #include <sstream>
-// #include <string>
-// #include <chrono>
-// #include <robothon2023/task_board_tasks.hpp>
-
-// #include <ur_ros_driver/ros_color_stream.hpp>
-
-// const int btn_blue = 1;
-// const int slider = 2;
-// const int plug = 3;
-// const int measure = 4;
-// const int wind_cable = 5;
-// const int btn_red = 6;
-// const int home = 0;
-// const int speed_test = 7;
-
-
-// bool checkSequence(std::vector<int> sequence){
-//     //measure
-//     auto plug_it = std::find(sequence.begin(), sequence.end(), plug);
-//     auto measure_it = std::find(sequence.begin(), sequence.end(), measure);
-//     auto wind_it = std::find(sequence.begin(), sequence.end(), wind_cable);
-
-//     if(wind_it < measure_it) return false;
-//     if(measure_it < plug_it) return false;
-//     return true;
-// }
-
-// // Argument handling added - Shubham
-// // Function to split a comma-separated string argument and convert it to a vector
-// // std::vector<int> parseTaskIDs(const std::string& task_ids_str) {
-// //     std::vector<int> task_ids;
-// //     std::stringstream ss(task_ids_str);
-// //     std::string task_id;
-    
-// //     // Split the string by commas and convert each part to an integer
-// //     while (getline(ss, task_id, ',')) {
-// //         task_ids.push_back(std::stoi(task_id));  // Convert string to int and add to vector
-// //     }
-    
-// //     return task_ids;
-// // }
-
-
-
-// int main(int argc, char* argv[])
-// {
-//     bool hook = false;
-//     bool probe = false;
-//     std::vector<double> time;
-
-//     int ctn = 0;
-
-//     ros::init(argc, argv, "taskboard_scheduler");
-//     ros::NodeHandle n("~");
-//     ros::AsyncSpinner spinner(2); 
-//     spinner.start();
-
-// // Argument handling added - Shubham
-//     // std::vector<int> sequenz = {1};
-//     // if (argc > 1) {
-//     //     std::string task_ids_str = argv[1];
-//     //     std::vector<int> sequenz = parseTaskIDs(task_ids_str);
-//     // }
-//     // else {
-//     //     // default all tasks done
-//     //     std::vector<int> sequenz = {1,2,3,4,5,6};
-//     // }
-
-//     std::vector<int> sequenz = {1,2,3,4,5,6};
-//     //std::vector<int> sequenz = {3};
-
-//     task_board_tasks task = task_board_tasks(n);
-
-//     // uncomment to check the sequence in final run
-//     // if(!checkSequence(sequenz)) {
-//     //    ROS_ERROR("SEQUENCE INVALID!");
-//     //    return 1;
-//     // }
-
-//     task.home();
-//     ros::Duration(2).sleep();
-    
-    
-//     int input;
-//     std::cout << "Detection" << std::endl << " 0 - Cam" << std::endl << " 1 - Touch" << std::endl;
-//     std::cin >> input;
-    
-//     if(input==1)
-//     {
-//         while(!task.call_touch_detection() && ros::ok());
-//     }
-//     else if(input == 0)
-//     {
-//         while(!task.call_board_detection() && ros::ok());
-//     }
-    
-   
-//     task.calculate_config();
-//     geometry_msgs::Transform transfrom_detection;
-//     transfrom_detection = task.tfBuffer_->lookupTransform("base_link", "task_board",ros::Time(0)).transform;
-    
-//     std::ofstream myfile1;
-//     myfile1.open ("/home/robothon/Robothon/Detection_2023_new.csv", std::ios::app);
-//     myfile1 << input << "," << task.config << ",";
-//     myfile1 << transfrom_detection.translation.x << "," << transfrom_detection.translation.y << "," << transfrom_detection.translation.z << ",";
-//     myfile1 << transfrom_detection.rotation.x << "," << transfrom_detection.rotation.y << "," << transfrom_detection.rotation.z << "," << transfrom_detection.rotation.w << "\n";
-//     myfile1.close();
-    
-//     //std::cout << "Touch Taskboard before start" << std::endl;
-    
-
-//     //std::cout << "Touch Taskboard before start" << std::endl;
-//     //std::cout << "!!!!!!!!!!!" << std::endl;
-    
-
-//     std::cout << "Press ENTER to start" << std::endl;
-//     std::cin.ignore();
-//     auto start = std::chrono::high_resolution_clock::now();
-//     task.call_robot_time();
-//     /** ENABLE THIS TO LOG DATA TO FILE **/
-//     // task.call_log(true,"log_2");
-    
-//     // move to optimal start position
-//     task.home();
-    
-//     int counter = 0;
-//     sequenz.push_back(0);
-//     do{
-//         switch (sequenz[counter])
-//         {
-//         case btn_blue:
-//             ROS_MAGENTA_STREAM("Task: btn blue");
-//             task.call_trajectory();
-//             time.push_back(task.call_robot_time());
-//             task.press_button("blue");
-//             task.call_trajectory();
-//             time.push_back(task.call_robot_time());
-//             counter++;
-//             break;
-//         case slider:
-//             ROS_MAGENTA_STREAM("Task: slider");
-//             task.center_slider();
-//             task.move_slider();
-//             task.call_trajectory();
-//             time.push_back(task.call_robot_time());
-//             counter++;
-//             break;
-//         case plug:
-//             ROS_MAGENTA_STREAM("Task: plug");
-//             task.move_plug("black","red");
-//             task.call_trajectory();
-//             time.push_back(task.call_robot_time());
-//             counter++;
-//             break;
-//         case measure:
-//             ROS_MAGENTA_STREAM("Task: grab probe");
-//             if(task.grab_probe())
-//             {
-//                 probe = true;
-//             }
-
-//             ROS_MAGENTA_STREAM("Task: open door");
-//             task.open_door();
-
-//             ROS_MAGENTA_STREAM("Task: measure");
-//             task.measure();
-//             task.call_trajectory();
-//             time.push_back(task.call_robot_time());
-
-//             ROS_MAGENTA_STREAM("Task: return probe");
-//             task.call_robot_time();
-//             if(task.return_probe())
-//             {
-//                 probe = false;
-//             }
-            
-//             counter++;
-//             break;
-//         case wind_cable:
-//             ROS_MAGENTA_STREAM("Task: get hook");
-//             if(task.get_hook())
-//             {
-//                 hook = true;
-//             }
-
-//             ROS_MAGENTA_STREAM("Task: hook cable");
-//             task.call_robot_time();
-//             task.hook_cable();
-
-//             ROS_MAGENTA_STREAM("Task: wind cable");
-//             task.call_robot_time();
-//             task.wind_cable();
-//             task.call_trajectory();
-//             time.push_back(task.call_robot_time());
-//             counter++;
-//             break;
-//         case btn_red:
-//             ROS_MAGENTA_STREAM("Task: btn red");
-//             if(hook){
-//                 task.press_button_hook();
-//             } else {
-//                 task.press_button("red");
-//             }
-//             task.call_trajectory();
-//             time.push_back(task.call_robot_time());
-//             counter++;
-//             break;
-//         case home:
-//             if(hook)
-//             {
-//                 ROS_MAGENTA_STREAM("Task: return hook");
-//                 task.get_hook(true);
-//             }
-//             if(probe)
-//             {
-//                 ROS_MAGENTA_STREAM("Task: return probe");
-//                 task.return_probe();
-//             }
-//             task.config = 2;
-//             ROS_MAGENTA_STREAM("Task: go home");
-//             task.home();
-//             task.call_trajectory();
-//             time.push_back(task.call_robot_time());
-//             counter++;
-//             break;
-//         case speed_test:
-//             ROS_MAGENTA_STREAM("Task: speed test");
-//             task.speed_test();
-//             task.call_trajectory();
-//             time.push_back(task.call_robot_time());
-//             counter++;
-//             break;
-//         default:
-//             break;
-//         }
-
-//     }while(counter <= sequenz.size()-1 &&ros::ok());
-
-//     task.call_robot_time();
-//     /** ENABLE THIS WHEN LOGGING TO FILE **/
-//     // task.call_log(false," ");
-
-//     auto ende  = std::chrono::high_resolution_clock::now();
-//     std::cout << "----------------------------" << std::endl;
-//     std::cout << std::endl << "Zeit: " << std::chrono::duration_cast<std::chrono::seconds>(ende-start).count() << " s" << std::endl;
-//     std::cout << "----------------------------" << std::endl;
-
-//     std::ofstream myfile;
-//     myfile.open ("/home/robothon/Robothon/Task_times.csv", std::ios::app);
-//     for(int i=1; i<time.size();i++)
-//     {
-//         myfile << "," << time[i]-time[i-1];
-//     }
-
-//     myfile << "\n";
-//     myfile.close();
-// }
 
 #include <ros/ros.h>
 #include <iostream>
@@ -279,11 +17,11 @@
 #include <sstream>
 #include <string>
 #include <chrono>
-#include <robothon2023/task_board_tasks.hpp>
+#include <MSVC2024_Setup_2024/task_board_tasks.hpp>
 
 #include <ur_ros_driver/ros_color_stream.hpp>
 
-#include "/home/robothon/Robothon/src/robothon2023/include/robothon2023/httplib.h"
+#include "/home/robothon/Robothon/src/MSVC2024_Setup_2024/include/MSVC2024_Setup_2024/httplib.h"
 #include <nlohmann/json.hpp>
 #include <vector>
 #include <algorithm>
@@ -379,14 +117,14 @@ void startServer() {
         cout << endl;
 
         res.set_content("Data received successfully", "text/plain");
-       
+
     } catch (const std::exception& e) {
         res.status = 400;
         res.set_content("Invalid data format", "text/plain");
     }
 });
 
-    ros::AsyncSpinner spinner(1); 
+    ros::AsyncSpinner spinner(1);
     spinner.start();
     svr.listen("0.0.0.0", 8080);
 
@@ -488,7 +226,7 @@ void runScheduler() {
                 // }
                 // if (hook) {
                 //     task.get_hook(true);
-                // }   
+                // }
                 if (probe) {
                     task.return_probe();
                 }
@@ -591,7 +329,7 @@ void runScheduler() {
 int main(int argc, char* argv[]) {
     // Initialize ROS
     ros::init(argc, argv, "move_test");
-    ros::NodeHandle n("~");    
+    ros::NodeHandle n("~");
     ros::AsyncSpinner spinner(1);
     spinner.start();
 

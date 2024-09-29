@@ -1,3 +1,11 @@
+/**
+ * @file route.ts
+ * @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)\
+ * @brief Task Scheduler route
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {

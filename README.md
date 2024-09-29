@@ -1,4 +1,4 @@
-# Robothon2023 RoboPig
+# MSVC2024_Setup_2024 RoboPig
 
 ## Generell Infos
 ### Used Hardware
@@ -50,23 +50,23 @@ sudo make install
 ```
 
 ## How to start
-Run Launcher: `roslaunch robothon2023 taskboard_core.launch`
+Run Launcher: `roslaunch MSVC2024_Setup_2024 taskboard_core.launch`
     - make sure that the robot ip in the launchfile is correct
 
 To run the taskboard scheduler:
-`rosrun robothon2023 robothon2023_taskboard`
+`rosrun MSVC2024_Setup_2024 MSVC2024_Setup_2024_taskboard`
 - !!WARNING!! robot will move immediately to home position
 
 To run the point recording script:
-`rosrun robothon2023 robothon2023_point_recording`
+`rosrun MSVC2024_Setup_2024 MSVC2024_Setup_2024_point_recording`
 
 To call the taskboard detection service:
     - run `rqt`
     - select sift_board_detection service and call it
 
-To run touch detect: 
-`rosrun robothon2023 robothon2023_taskboard`
-    - !!Attention!! robot is immediately aligning to z 
+To run touch detect:
+`rosrun MSVC2024_Setup_2024 MSVC2024_Setup_2024_taskboard`
+    - !!Attention!! robot is immediately aligning to z
     - touch so that +y of tcp looks away from taskboard.
     - touch longside without cable holder
     - touch shortside next to probe
@@ -75,24 +75,23 @@ To run touch detect:
     - Confirm position in rviz
 
 To perform hand-eye calibration of the IDS camera:
-    - run taskboard launcher 
+    - run taskboard launcher
     - run launcher `roslaunch camera_robot_calibration capture_points.launch`
     - `cd Robothon/src/extrinsic-calib-tools/camera_robot_calibration/scripts`
     - `python3 camera_robot_calibration.py` here you will see the output of rthe services
     - Go to Desktop and run `python3 cowCamInfoPub.py`
     - Open a new terminal in the same location and run `python3 diaMarkerDet.py`
     - !! If there are errors with opencv version, run this `pip3 install --upgrade opencv-contrib-python`
-    - attach the Charuco board to the gripper and move the tcp such that the board is visible in the camera 
+    - attach the Charuco board to the gripper and move the tcp such that the board is visible in the camera
     - run `rqt` in a terminal and open read_tf service
     - move the board slightly and each time call the read_tf service. Do this at least 5 times
     - call the `computer_frames` service to get the camera extrinsic matrix in terminal
     - it gives you the rotation matrix R and translation vector t, so convert this into a 4x4 transformation matrix [  R   transpose(t)],
-                                                  [0 0 0       1     ]  
+                                                  [0 0 0       1     ]
     - Update the ids_cam transform in tf2.json file with this matrix
 
 
 ## How to Log data
-1. uncommend 2x call_log() in task_board_scheduler.cpp 
+1. uncommend 2x call_log() in task_board_scheduler.cpp
 2. change path in task_board_tasks.cpp
 After each run change filename in first call_log() in task_board_scheduler.cpp
-

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(robothon2023)
+project(MSVC2024_Setup_2024)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++17)
@@ -59,18 +59,18 @@ generate_messages(
 catkin_package(
   INCLUDE_DIRS
     include
-  DEPENDS 
+  DEPENDS
     EIGEN3
     ur_ros_driver
 )
 
 include_directories(
   include
-  ${Boost_INCLUDE_DIR} 
+  ${Boost_INCLUDE_DIR}
   ${EIGEN3_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
-  ${OpenCV_INCLUDE_DIRS} 
-  ${OpenCV_LIB_DIR} 
+  ${OpenCV_INCLUDE_DIRS}
+  ${OpenCV_LIB_DIR}
 )
 
 
@@ -87,7 +87,7 @@ catkin_install_python(PROGRAMS
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/robothon2023.cpp
+#   src/${PROJECT_NAME}/MSVC2024_Setup_2024.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -98,7 +98,7 @@ catkin_install_python(PROGRAMS
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/robothon2023_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/MSVC2024_Setup_2024_node.cpp)
 
 add_executable(${PROJECT_NAME}_point_recording src/point_recording.cpp)
 add_executable(${PROJECT_NAME}_point_recording_new src/point_recording_new.cpp)
@@ -119,8 +119,8 @@ target_link_libraries(${PROJECT_NAME}_taskboard ${catkin_LIBRARIES} ${Eigen_LIBR
 
 target_link_libraries(${PROJECT_NAME}_ids_node ids_peak ids_peak_ipl ${OpenCV_LIBS} ${CMAKE_THREAD_LIBS_INIT} ${catkin_LIBRARIES} )
 
-add_dependencies(${PROJECT_NAME}_point_recording robothon2023_generate_messages_cpp)
-add_dependencies(${PROJECT_NAME}_point_recording_new robothon2023_generate_messages_cpp)
-add_dependencies(${PROJECT_NAME}_touch_detect robothon2023_generate_messages_cpp)
-add_dependencies(${PROJECT_NAME}_tf2_publisher robothon2023_generate_messages_cpp)
-add_dependencies(${PROJECT_NAME}_taskboard robothon2023_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME}_point_recording MSVC2024_Setup_2024_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME}_point_recording_new MSVC2024_Setup_2024_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME}_touch_detect MSVC2024_Setup_2024_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME}_tf2_publisher MSVC2024_Setup_2024_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME}_taskboard MSVC2024_Setup_2024_generate_messages_cpp)

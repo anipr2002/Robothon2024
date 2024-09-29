@@ -1,5 +1,14 @@
 // @ts-nocheck
 
+/**
+ * @file ByodFlow.tsx
+ * @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)\
+ * @brief BYOD Flow component
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
+
 "use client";
 import React, { useCallback, useState } from "react";
 import {

@@ -1,3 +1,11 @@
+/**
+ * @file GripperMove.tsx
+ * @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)\
+ * @brief Gripper Move service component
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 "use client";
 import React from "react";
 import {

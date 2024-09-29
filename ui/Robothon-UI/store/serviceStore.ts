@@ -1,3 +1,11 @@
+/**
+ * @file robotStore.ts
+ * @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)\
+ * @brief Robot Store
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 import { create } from "zustand";
 import { set_freedive_args ,get_gripper_calibration} from "@/utils/services"
 
@@ -20,5 +28,5 @@ export const useServiceStore = create<serviceStoreProps>((set) => ({
 
 get_gripper_calibration.callService({}, (result) => {
     console.log("/get_gripper_calibration called", result);
-    
+
 });

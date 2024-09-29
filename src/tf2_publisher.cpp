@@ -1,14 +1,14 @@
 /**
  * @file tf2_publisher.cpp
- * @authors Adrian Müller (adrian.mueller@study.thws.de), 
+ * @authors Adrian Müller (adrian.mueller@study.thws.de),
  *          Maximilian Hornauer (maximilian.hornauer@study.thws.de),
  *          Usama Ali (usama.ali@study.thws.de)
  * @brief Program to publish stored points
  * @version 0.1
  * @date 2023-03-29
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 
 
@@ -16,14 +16,14 @@
 #include <ros/package.h>
 
 #include <fstream>
-#include <robothon2023/eigen_json.hpp>
+#include <MSVC2024_Setup_2024/eigen_json.hpp>
 
 #include <geometry_msgs/Pose.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/static_transform_broadcaster.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <eigen_conversions/eigen_msg.h>
-#include <robothon2023/AddTf2.h>
+#include <MSVC2024_Setup_2024/AddTf2.h>
 
 #include <visualization_msgs/Marker.h>
 
@@ -40,8 +40,8 @@ private:
     std::string filename;
     std::map<std::string, geometry_msgs::TransformStamped> transforms;
     tf2_ros::StaticTransformBroadcaster* br;
-    bool add_tf(robothon2023::AddTf2::Request& req,
-                robothon2023::AddTf2::Response& res);
+    bool add_tf(MSVC2024_Setup_2024::AddTf2::Request& req,
+                MSVC2024_Setup_2024::AddTf2::Response& res);
     void writeJson();
     void readJson();
     void publishTf();
@@ -57,7 +57,7 @@ tf2_publisher::tf2_publisher(ros::NodeHandle& n, std::string filename_)
 {
     this->server_tf_ = n.advertiseService("/store_tf",&tf2_publisher::add_tf, this);
     this->vis_pub_ = n.advertise<visualization_msgs::Marker>("/visualization_marker", 0 ,true);
-    
+
     this->spinner = new ros::AsyncSpinner(2);
     this->br = new tf2_ros::StaticTransformBroadcaster();
     this->filename = filename_;
@@ -73,7 +73,7 @@ tf2_publisher::~tf2_publisher()
 
 void tf2_publisher::visual_taskboard()
 {
-    
+
     visualization_msgs::Marker marker;
     marker.header.frame_id = "task_board";
     marker.header.stamp = ros::Time();
@@ -96,7 +96,7 @@ void tf2_publisher::visual_taskboard()
     marker.color.g = 0.0;
     marker.color.b = 0.0;
     //only if using a MESH_RESOURCE marker type:
-    marker.mesh_resource = "package://robothon2023/config/Taskboard.dae";
+    marker.mesh_resource = "package://MSVC2024_Setup_2024/config/Taskboard.dae";
     marker.mesh_use_embedded_materials = true;
     vis_pub_.publish(marker);
 }
@@ -109,13 +109,13 @@ void tf2_publisher::publishTf() {
 }
 
 void tf2_publisher::readJson() {
-    std::string path = ros::package::getPath("robothon2023");
+    std::string path = ros::package::getPath("MSVC2024_Setup_2024");
 
     std::ifstream f(path+"/config/"+this->filename);
     json j = json::parse(f);
 
     for(auto element : j.items())
-    {   
+    {
         std::cout << "Importing " << element.key() << std::endl;
         geometry_msgs::TransformStamped transformStamped;
         transformStamped.header.stamp = ros::Time::now();
@@ -128,7 +128,7 @@ void tf2_publisher::readJson() {
 }
 
 void tf2_publisher::writeJson()
-{   
+{
     std::cout << "Writing file..." << std::endl;
     json j;
 
@@ -141,20 +141,20 @@ void tf2_publisher::writeJson()
         j[i.first]["transform"] = iso.matrix();
     }
 
-    std::string path = ros::package::getPath("robothon2023");
+    std::string path = ros::package::getPath("MSVC2024_Setup_2024");
     std::ofstream file(path+"/config/"+this->filename);
     file << std::setw(4) << j;
 }
 /**
  * @brief Service call to add a tf to the transforms buffer
- * 
+ *
  * @param req the request with the transform and the information if the pose should be recalculated in relation to the taskboard
  * @param res the response
- * @return true 
- * @return false 
+ * @return true
+ * @return false
  */
-bool tf2_publisher::add_tf(robothon2023::AddTf2::Request& req,
-                            robothon2023::AddTf2::Response& res)
+bool tf2_publisher::add_tf(MSVC2024_Setup_2024::AddTf2::Request& req,
+                            MSVC2024_Setup_2024::AddTf2::Response& res)
 {
     ROS_INFO_STREAM(" >> Tf2_punlisher Callback called with " << req);
     geometry_msgs::TransformStamped temp = req.pose;
@@ -164,7 +164,7 @@ bool tf2_publisher::add_tf(robothon2023::AddTf2::Request& req,
         tf::transformMsgToEigen(temp.transform,iso);
         Eigen::Matrix4d mat_f = iso.matrix();
 
-        auto tb = transforms["task_board"]; // get taskboard to base_link 
+        auto tb = transforms["task_board"]; // get taskboard to base_link
         //ROS_INFO_STREAM("> > > tb is " << tb);
         tf::transformMsgToEigen(tb.transform,iso);
         Eigen::Matrix4d mat_tb = iso.matrix();
@@ -204,11 +204,10 @@ int main(int argc, char* argv[])
         std::cout << "filename: " << filename << std::endl;
         return 0;
     }
-    
+
     tf2_publisher temp(n, filename);
-    
+
     ros::spin();
-    
+
     return 0;
 }
-

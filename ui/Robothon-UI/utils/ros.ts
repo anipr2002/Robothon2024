@@ -1,4 +1,13 @@
 // @ts-nocheck
+
+/**
+ * @file ros.ts
+ * @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)\
+ * @brief ROS connection
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 "use client";
 
 import { useState, useEffect } from 'react';

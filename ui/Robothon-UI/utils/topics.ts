@@ -1,4 +1,13 @@
 // @ts-nocheck
+
+/**
+ * @file topics.ts
+ * @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)\
+ * @brief ROS topics
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 import * as ROSLIB from 'roslib';
 
 const ros = new ROSLIB.Ros({ encoding: 'ascii' , url: 'ws://localhost:9090'});

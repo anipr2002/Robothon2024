@@ -1,18 +1,18 @@
-/**
- * @file task_board_tasks.cpp
- * @authors Adrian Müller (adrian.mueller@study.thws.de), 
- *          Maximilian Hornauer (maximilian.hornauer@study.thws.de),
- *          Usama Ali (usama.ali@study.thws.de)
- * @brief Program to execute tasks
- * @version 0.1
- * @date 2023-04-11
- * 
- * @copyright Copyright (c) 2023
- * 
- */
+// /**
+//  * @file task_board_scheduler.cpp
+//  * @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)\
+                Shubham Joshi(shubham.joshi@study.thws.de)\
+                Medhansh Rath(medhansh.rath@study.thws.de)
+//  * @brief Program to define
+//  * @version 0.1
+//  * @date 2023-04-11
+//  *
+//  * @copyright Copyright (c) 2023
+//  *
+//  */
 
 
-#include <robothon2023/task_board_tasks.hpp>
+#include <MSVC2024_Setup_2024/task_board_tasks.hpp>
 
 task_board_tasks::task_board_tasks(ros::NodeHandle& n)
 {
@@ -27,10 +27,10 @@ task_board_tasks::task_board_tasks(ros::NodeHandle& n)
     contact_move_ = n.serviceClient<ur_ros_driver::SetContactTarget>("/ur_hardware_interface/set_contact_target");
     gripper_move_ = n.serviceClient<ur_ros_driver::SetGripper>("/ur_hardware_interface/robotiq/set_gripper");
     move_trajectory_ = n.serviceClient<ur_ros_driver::SetTrajectory>("/ur_hardware_interface/set_trajectory");
-    triangle_detection_ = n.serviceClient<robothon2023::GetTriangles>("/triangle_detection");
-    taskboard_detection_ = n.serviceClient<robothon2023::GetBoardLocation>("/board_detection");
-    touch_detection_ = n.serviceClient<robothon2023::GetBoardLocation>("/touch_detection");
-    finish_detection_ = n.serviceClient<robothon2023::GetFinished>("/finished_detection");
+    triangle_detection_ = n.serviceClient<MSVC2024_Setup_2024::GetTriangles>("/triangle_detection");
+    taskboard_detection_ = n.serviceClient<MSVC2024_Setup_2024::GetBoardLocation>("/board_detection");
+    touch_detection_ = n.serviceClient<MSVC2024_Setup_2024::GetBoardLocation>("/touch_detection");
+    finish_detection_ = n.serviceClient<MSVC2024_Setup_2024::GetFinished>("/finished_detection");
     logging_ = n.serviceClient<ur_ros_driver::Log>("/ur_hardware_interface/logging");
     robot_time_ = n.serviceClient<ur_ros_driver::GetTimeStamp>("/ur_hardware_interface/get_robot_timestamp");
 
@@ -223,10 +223,10 @@ bool task_board_tasks::call_gripper(ur_ros_driver::SetGripper& srv)
 }
 
 
-bool task_board_tasks::call_triangles(robothon2023::GetTriangles& srv)
+bool task_board_tasks::call_triangles(MSVC2024_Setup_2024::GetTriangles& srv)
 {
     if(!triangle_detection_.call(srv))
-    {   
+    {
         // throw("Failed to call service /triangles");
         ROS_ERROR("Failed to call service /triangles");
         //srv.response.status=-1;
@@ -239,7 +239,7 @@ bool task_board_tasks::call_triangles(robothon2023::GetTriangles& srv)
 
 bool task_board_tasks::call_board_detection()
 {
-    robothon2023::GetBoardLocation srv;
+    MSVC2024_Setup_2024::GetBoardLocation srv;
     if(!taskboard_detection_.call(srv))
     {
         // throw("Failed to call service /taskboard_detection");
@@ -258,7 +258,7 @@ bool task_board_tasks::call_board_detection()
 
 bool task_board_tasks::call_touch_detection()
 {
-    robothon2023::GetBoardLocation srv;
+    MSVC2024_Setup_2024::GetBoardLocation srv;
     if(!touch_detection_.call(srv))
     {
         // throw("Failed to call service /taskboard_detection");
@@ -276,7 +276,7 @@ bool task_board_tasks::call_touch_detection()
 }
 
 bool task_board_tasks::call_trajectory()
-{   
+{
     if(!move_trajectory_.call(trajectory))
     {
         trajectory.request.path.clear();
@@ -295,7 +295,7 @@ bool task_board_tasks::call_trajectory()
 
 bool task_board_tasks::call_finish_detection()
 {
-    robothon2023::GetFinished srv;
+    MSVC2024_Setup_2024::GetFinished srv;
     if(!finish_detection_.call(srv))
     {
         // throw("Failed to call service /taskboard_detection");
@@ -313,7 +313,7 @@ bool task_board_tasks::call_log(bool IO, std::string filename)
 {
     ur_ros_driver::Log srv;
     srv.request.IO = IO;
-    
+
     srv.request.file_name = "/home/robothon/robothon_logs/"+filename; //NOTE: Change the log path if needed!
     if(!logging_.call(srv))
     {
@@ -358,7 +358,7 @@ bool task_board_tasks::press_button(std::string color)
             call_gripper(g_open);
             add_cart_Path_Entry("btn_red_app", 1,blend_min_,travel_vel_,travel_acc_);
         }
-        
+
 
     if(color == "blue" || color == "red" ||  color == "M5" )
     {
@@ -371,7 +371,7 @@ bool task_board_tasks::press_button(std::string color)
         {
             add_cart_Path_Entry("btn_"+color+"_app_short", 1,blend_min_,travel_vel_,travel_acc_);
         }
-   
+
         call_trajectory();
 
         call_force_target(btn);
@@ -384,7 +384,7 @@ bool task_board_tasks::press_button(std::string color)
         call_force_target(btn);
 
         add_cart_Path_Entry("btn_"+color+"_app", 1,0.02,travel_vel_,travel_acc_);
-        
+
     }
     else
     {
@@ -434,19 +434,19 @@ bool task_board_tasks::move_slider()
     // Eigen::Isometry3d base_taskboard_iso;
     // tf::transformMsgToEigen(base_taskboard,base_taskboard_iso);
 
-    // robothon2023::GetTriangles srv;
+    // MSVC2024_Setup_2024::GetTriangles srv;
 
     // int cnt = 0;
     // int cntFalse = 0;
     // int fail_cnt = 0;
     // double offset = 0.0;
     // int dir = 0;
-   
+
     // while(call_triangles(srv)  && ros::ok())
     // {
     //     ROS_WARN("Status %i", srv.response.status);
     //     if(srv.response.status == 1)
-    //     {   
+    //     {
     //         double delta = srv.response.delta;
     //         int sign = (0 < delta) - (delta < 0);
     //         double force = delta*2.0 + sign*4;
@@ -484,7 +484,7 @@ bool task_board_tasks::move_slider()
     // call_force_target(forcemode);
 
     blend_min_ = 0.0;
-    
+
     add_cart_Path_Entry("slider_app", 1,blend_min_,travel_vel_,travel_acc_);
     call_trajectory();
     call_gripper(g_open);
@@ -523,10 +523,10 @@ call_gripper(g_close_slow);
 //     do
 //     {
 //         ros::Duration(0.2).sleep();
-//     } while (wrench_.wrench.force.x > -4 
-//              && ros::ok() 
+//     } while (wrench_.wrench.force.x > -4
+//              && ros::ok()
 //              && (ros::Time::now()-start) < ros::Duration(10));
-    
+
 //     forcemode.request.wrench = {0,5,0,0,0,0};
 //     call_force_target(forcemode);
 
@@ -534,7 +534,7 @@ call_gripper(g_close_slow);
 //     do
 //     {
 //         ros::Duration(0.2).sleep();
-//     } while (wrench_.wrench.force.x < 4 
+//     } while (wrench_.wrench.force.x < 4
 //              && ros::ok()
 //              && (ros::Time::now()-start) < ros::Duration(10));
 //     return true;
@@ -559,10 +559,10 @@ bool task_board_tasks::move_plug(std::string from, std::string to)
     call_gripper(g_close);
 
     add_cart_Path_Entry("jack_"+ from +"_app", 1,blend_min_,travel_vel_,travel_acc_);
-    add_cart_Path_Entry("jack_"+ to +"_app", 1,blend_min_,travel_vel_,travel_acc_); 
+    add_cart_Path_Entry("jack_"+ to +"_app", 1,blend_min_,travel_vel_,travel_acc_);
     call_trajectory();
 
-    
+
     // ur_ros_driver::SetContactTarget contact = contact_target();
     // call_contact_target(contact);
 
@@ -591,7 +591,7 @@ bool task_board_tasks::move_plug(std::string from, std::string to)
 
     geometry_msgs::Transform  jack_in = tfBuffer_->lookupTransform("base","jack_"+to,ros::Time(0)).transform;
     //geometry_msgs::Transform  jack_in = tfBuffer_->lookupTransform("base","jack_"+to+"_new_",ros::Time(0)).transform; // debugging
-    
+
     jack_to.request.wrench = {0,0,-20,0,0,0};
     call_force_target(jack_to);
     while(tcp_position_.transform.translation.z > jack_in.translation.z+0.001 && ros::ok())
@@ -609,7 +609,7 @@ bool task_board_tasks::move_plug(std::string from, std::string to)
     call_gripper(g_open);
 
     add_cart_Path_Entry("jack_"+ to +"_app", 1,0.01,travel_vel_,travel_acc_);
-    call_trajectory();  
+    call_trajectory();
     //call_gripper(g_close);
 
    //ROS_GREEN_STREAM("Finished Move Plug");
@@ -634,7 +634,7 @@ bool task_board_tasks::grab_probe()
     add_cart_Path_Entry("probe_pulled", 1, blend_min_,travel_vel_,travel_acc_);
     //add_cart_Path_Entry("probe_plug_app", 1);
     // add_cart_Path_Entry("probe_plug_app_helper", 1,0.01,travel_vel_,travel_acc_);
-    
+
    //ROS_GREEN_STREAM("Finished Grab Probe");
     return true;
 }
@@ -666,14 +666,14 @@ bool task_board_tasks::open_door()
     add_cart_Path_Entry("door_4", 1, 0.01,travel_vel_,travel_acc_);
     add_cart_Path_Entry("door_5", 1, 0.01,travel_vel_,travel_acc_);
     //door_6 is not used
-    
+
    //ROS_GREEN_STREAM("Finished Open Door");
     return true;
 }
 
 bool task_board_tasks::measure()
 {
-    
+
     ur_ros_driver::SetForceTarget measure = force_target(true,{0,0,1,0,0,0},{0,0,-6,0,0,0});
 
     add_cart_Path_Entry("meas_app", 1,blend_min_,travel_vel_,travel_acc_);
@@ -693,7 +693,7 @@ bool task_board_tasks::measure()
     while(wrench_.wrench.force.z < 5 && ros::ok())
     {
         ros::Duration(0.1).sleep();
-    } 
+    }
 
     measure.request.IO = false;
     call_force_target(measure);
@@ -750,11 +750,11 @@ bool task_board_tasks::get_hook(bool bring)
     ur_ros_driver::SetGripper g_close = gripper_close();
     ur_ros_driver::SetGripper g_open = gripper_open(50);
     if(!bring) {
-        
+
         call_trajectory();
         call_gripper(g_open);
         if(config != 0)
-            add_cart_Path_Entry("hook_grab_app", 1,0.02,travel_vel_,travel_acc_); 
+            add_cart_Path_Entry("hook_grab_app", 1,0.02,travel_vel_,travel_acc_);
         add_cart_Path_Entry("hook_grab", 1);
         call_trajectory();
 
@@ -771,7 +771,7 @@ bool task_board_tasks::get_hook(bool bring)
 
     } else {
         if(config != 0)
-            add_cart_Path_Entry("hook_grab_app", 1,0.02,travel_vel_,travel_acc_); 
+            add_cart_Path_Entry("hook_grab_app", 1,0.02,travel_vel_,travel_acc_);
         add_cart_Path_Entry("hook_grab", 1,0.005,travel_vel_,travel_acc_);
         call_trajectory();
 
@@ -790,27 +790,27 @@ bool task_board_tasks::get_hook(bool bring)
 //     ur_ros_driver::SetGripper g_close = gripper_close();
 //     ur_ros_driver::SetGripper g_open = gripper_open(100);
 //     ur_ros_driver::SetGripper g_open_1 = gripper_open(30);
-//     if(!bring) 
+//     if(!bring)
 //     {
 //         call_trajectory();
 //         call_gripper(g_open_1);
-//         if(config != 0) 
+//         if(config != 0)
 //         {
 //             add_cart_Path_Entry("hook_grab_1_app_helper", 1,0.02,travel_vel_,travel_acc_);
 //         }
-//         //fix joint position 
-        
-    
+//         //fix joint position
+
+
 //         //array6d hook_grab_1_app_joints({0.8822202682495117, -1.116662399177887,1.4039080778705042, -1.8579136333861292, -1.5679720083819788,2.507723331451416});
 //         //add_joint_Path_Entry(hook_grab_1_app_joints, 0,0, joint_vel_ , joint_acc_);
-        
+
 //         array6d hook_grab_1_app_joints({0.8822202682495117, -1.116662399177887,1.4039080778705042, -1.8579136333861292, -1.5679720083819788,-0.6286428610431116});
 //         add_joint_Path_Entry(hook_grab_1_app_joints, 0,0.05, joint_vel_ , joint_acc_);
-    
+
 //         //call_trajectory();
 //         //std::cout << "press enter to continue" << std::endl;
 //         //std::cin.ignore();
-            
+
 //         add_cart_Path_Entry("hooknew_grab_short", 1,0.02,travel_vel_,travel_acc_);
 //         add_cart_Path_Entry("hooknew_grab", 1,blend_min_,travel_vel_,travel_acc_);
 //         call_trajectory();
@@ -818,7 +818,7 @@ bool task_board_tasks::get_hook(bool bring)
 //         call_gripper(g_close);
 
 //         add_cart_Path_Entry("hooknew_grab_short", 1, blend_min_,travel_vel_,travel_acc_);
-        
+
 //         if (config ==1)
 //         {
 //             array6d hook_grab_1_app_joints({0.8822202682495117, -1.116662399177887,1.4039080778705042, -1.8579136333861292, -1.5679720083819788,-0.6286428610431116});
@@ -833,21 +833,21 @@ bool task_board_tasks::get_hook(bool bring)
 //         //call_trajectory();
 //         //std::cout << "press enter to continue" << std::endl;
 //         //std::cin.ignore();
-        
-        
+
+
 
 //         // [1.403543774281637, -1.1164595645717164, 0.8823729753494263, -1.8575102291502894, -1.5687769095050257, -0.6286428610431116]
-        
 
 
-//     } 
-//     else 
+
+//     }
+//     else
 //     {
-        
+
 //         add_cart_Path_Entry("hooknew_grab_app", 1,0.02,travel_vel_,travel_acc_);
 //         add_cart_Path_Entry("hooknew_grab_short", 1,0.02,travel_vel_,travel_acc_);
 //         add_cart_Path_Entry("hooknew_grab", 1,blend_min_,travel_vel_,travel_acc_);
-        
+
 //         call_trajectory();
 
 //         call_gripper(g_open);
@@ -897,7 +897,7 @@ bool task_board_tasks::wind_cable()
     add_cart_Path_Entry("wind1_14", 1, 0.002,wind_vel_,wind_acc_);  //down right
     add_cart_Path_Entry("wind1_15", 1, 0.002,wind_vel_,wind_acc_);  //up right
     add_cart_Path_Entry("wind1_16", 1, 0.002,wind_vel_,wind_acc_);  //up left
-    
+
 
     // add_cart_Path_Entry("wind2_1", 1, 0.005,wind_vel_,wind_acc_);  //down left
     // add_cart_Path_Entry("wind2_2", 1, 0.005,wind_vel_,wind_acc_);  //down right
@@ -907,7 +907,7 @@ bool task_board_tasks::wind_cable()
     // #ifdef fast_mode
     //     if(i==0){press_button_hook();}
     // #endif
-    
+
 
 
     ur_ros_driver::SetGripper g_open = gripper_open(40);
@@ -928,9 +928,9 @@ bool task_board_tasks::wind_cable()
 
 bool task_board_tasks::home(bool fast)
 {
-   
+
     ur_ros_driver::SetGripper g_close = gripper_close();
-    
+
     double blend = 0;
 
     call_trajectory();
@@ -980,26 +980,26 @@ bool task_board_tasks::home(bool fast)
 }
 
 /**
- * @brief 
- * 
- * @param start minimal force 
+ * @brief
+ *
+ * @param start minimal force
  * @param stop maximal force
  * @param step_c steps in one rotation
  * @param step_f amount of rotations
- * @return true 
- * @return false 
+ * @return true
+ * @return false
  */
 bool task_board_tasks::spiral_force(double start, double stop, int step_c , double step_f, double z_limit, bool dir)
 {
     double radius = start;
     double inc = (2* M_PI) / step_c;
-    double inc_f = (stop - start)/(step_f*step_c); 
+    double inc_f = (stop - start)/(step_f*step_c);
 
     int counter;
     double x,y;
     ur_ros_driver::SetForceTarget force_srv = force_target(true,{1,1,1,0,0,0},{0,0,0,0,0,0});
     // ROS_INFO_STREAM("Bedingung: "<< (radius <= stop && tcp_position_.transform.translation.z >= 0.109) || wrench_.wrench.force.z < 7);
-    
+
     while ((radius <= stop && tcp_position_.transform.translation.z >= z_limit) || wrench_.wrench.force.z < 3)
     {
         if(dir)
@@ -1035,8 +1035,8 @@ bool task_board_tasks::spiral_force(double start, double stop, int step_c , doub
 
 double task_board_tasks::pose_distance(geometry_msgs::Transform target)
 {
-    return std::sqrt(std::pow(target.translation.x - tcp_position_.transform.translation.x,2) 
-                   + std::pow(target.translation.y - tcp_position_.transform.translation.y,2) 
+    return std::sqrt(std::pow(target.translation.x - tcp_position_.transform.translation.x,2)
+                   + std::pow(target.translation.y - tcp_position_.transform.translation.y,2)
                    + std::pow(target.translation.z - tcp_position_.transform.translation.z,2));
 }
 
@@ -1175,7 +1175,7 @@ bool task_board_tasks::charging_cable_insert(std::string cable_type) {
         add_cart_Path_Entry("usb1_app", 1,blend_min_,travel_vel_,travel_acc_);
         add_cart_Path_Entry("usb_drop", 1,blend_min_,travel_vel_,travel_acc_);
         call_trajectory();
-    
+
         call_gripper(g_open);
         add_cart_Path_Entry("usb_drop2", 1,blend_min_,travel_vel_,travel_acc_);
         call_trajectory();
@@ -1190,7 +1190,7 @@ bool task_board_tasks::charging_cable_insert(std::string cable_type) {
 
 
     } else if (cable_type == "lightning") {
-        
+
         call_gripper(g_open);
         add_cart_Path_Entry("lightning1_app", 1,blend_min_,travel_vel_,travel_acc_);
         call_trajectory();
@@ -1261,10 +1261,10 @@ bool task_board_tasks::unscrew() {
     call_gripper(g_open);
 
 
-   
+
 
     for(int i = 0; i <3; i++)
-    {   
+    {
         add_cart_Path_Entry("unscrew2_3", 1,blend_min_,travel_vel_,travel_acc_);
         call_trajectory();
         call_gripper(g_close);
@@ -1386,7 +1386,7 @@ bool task_board_tasks::switch_on(){
     ur_ros_driver::SetGripper g_open = gripper_open(80);
     ur_ros_driver::SetGripper g_close = gripper_close();
 
-    
+
     add_cart_Path_Entry("switch_app", 1,blend_min_,travel_vel_,travel_acc_);
 
     call_trajectory();
@@ -1436,7 +1436,7 @@ bool task_board_tasks::backcover(){
     add_cart_Path_Entry("backcover_app", 1,blend_min_,travel_vel_,travel_acc_);
     add_cart_Path_Entry("backcover1", 1,blend_min_,travel_vel_,travel_acc_);
     add_cart_Path_Entry("backcover2", 1,blend_min_,travel_vel_,travel_acc_);
-    add_cart_Path_Entry("backcover3", 1,blend_min_,travel_vel_,travel_acc_);    
+    add_cart_Path_Entry("backcover3", 1,blend_min_,travel_vel_,travel_acc_);
     add_cart_Path_Entry("backcover2", 1,blend_min_,travel_vel_,travel_acc_);
     add_cart_Path_Entry("backcover4", 1,blend_min_,travel_vel_,travel_acc_);
     add_cart_Path_Entry("backcover1", 1,blend_min_,travel_vel_,travel_acc_);

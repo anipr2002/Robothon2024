@@ -1,3 +1,11 @@
+/**
+ * @file robotStore.ts
+ * @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)\
+ * @brief Robot Store
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 import { create } from "zustand";
 
 interface StoreProps {

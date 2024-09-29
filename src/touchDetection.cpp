@@ -1,20 +1,20 @@
 /**
  * @file touchDetection.cpp
- * @authors Adrian Müller (adrian.mueller@study.thws.de), 
+ * @authors Adrian Müller (adrian.mueller@study.thws.de),
  *          Maximilian Hornauer (maximilian.hornauer@study.thws.de),
  *          Usama Ali (usama.ali@study.thws.de)
  * @brief Program to manually localize the taskboard
  * @version 0.1
  * @date 2023-03-29
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 
 #include <ros/ros.h>
 
 #include <fstream>
-#include <robothon2023/eigen_json.hpp>
+#include <MSVC2024_Setup_2024/eigen_json.hpp>
 
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/TransformStamped.h>
@@ -40,8 +40,8 @@
 #include <ur_ros_driver/SetFreedrive.h>
 #include <ur_ros_driver/SetCartTarget.h>
 #include <ur_ros_driver/SetGripper.h>
-#include <robothon2023/AddTf2.h>
-#include <robothon2023/GetBoardLocation.h>
+#include <MSVC2024_Setup_2024/AddTf2.h>
+#include <MSVC2024_Setup_2024/GetBoardLocation.h>
 
 
 using json = nlohmann::json;
@@ -80,22 +80,22 @@ int main(int argc, char* argv[])
     ros::NodeHandle n;
     ros::ServiceClient client_f = n.serviceClient<ur_ros_driver::SetFreedrive>("/ur_hardware_interface/set_freedive");
     ros::ServiceClient client_move = n.serviceClient<ur_ros_driver::SetCartTarget>("/ur_hardware_interface/set_cart_target");
-    ros::ServiceClient client_store_tf = n.serviceClient<robothon2023::AddTf2>("/store_tf");
+    ros::ServiceClient client_store_tf = n.serviceClient<MSVC2024_Setup_2024::AddTf2>("/store_tf");
     ros::ServiceClient gripper_move = n.serviceClient<ur_ros_driver::SetGripper>("/ur_hardware_interface/robotiq/set_gripper");
-    ros::ServiceClient taskboard_detection_ = n.serviceClient<robothon2023::GetBoardLocation>("/board_detection");
+    ros::ServiceClient taskboard_detection_ = n.serviceClient<MSVC2024_Setup_2024::GetBoardLocation>("/board_detection");
 
     tf2_ros::Buffer tfBuffer;
     tf2_ros::TransformListener tfListener(tfBuffer);
-    
+
     ur_ros_driver::SetGripper gripper_srv;
     gripper_srv.request.position = 100;
     gripper_srv.request.force = 1;
     gripper_srv.request.speed = 100;
     gripper_srv.request.asynchronous = true;
-    
+
     ros::Subscriber sub = n.subscribe("/ur_hardware_interface/tcp_pose", 1000, tcpCallback);
 
-    ros::AsyncSpinner spinner(2); 
+    ros::AsyncSpinner spinner(2);
     spinner.start();
     //Normal Gripper
     K::Plane_3 xzPlane(K::Point_3(0,-0.0105,1), K::Point_3(1,-0.0105,0), K::Point_3(-1,-0.0105,0)); //correction of -10,5mm because gripper is 21mm wide
@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
     /*
     std::cout << "Detection with Cam" << std::endl;
 
-    robothon2023::GetBoardLocation srv;
+    MSVC2024_Setup_2024::GetBoardLocation srv;
     if(!taskboard_detection_.call(srv))
     {
         ROS_INFO("Detection went wrong");
@@ -159,7 +159,7 @@ int main(int argc, char* argv[])
 
     // get short edge plane
     tf::transformMsgToEigen(tcp_pose.transform, robotPose);
-    Eigen::Matrix4d sidePose = robotPose.matrix(); 
+    Eigen::Matrix4d sidePose = robotPose.matrix();
     auto shortSidePlane = xzPlane.transform(eigen2CGAL(sidePose)); //transform plane to tcp pose
 
     std::cout << "Move the robot to the top of the board..." << std::endl;
@@ -169,12 +169,12 @@ int main(int argc, char* argv[])
     tf::transformMsgToEigen(tcp_pose.transform, robotPose);
     Eigen::Matrix4d topPose = robotPose.matrix();
     auto topPlane = xyPlane.transform(eigen2CGAL(topPose)); //transform plane to tcp pose
-    
+
     auto firstIntersect = CGAL::intersection(longSidePlane, shortSidePlane); //calculate intersection of sides --> returns a line in 3D space
     auto finalIntersect = CGAL::intersection(*boost::get<K::Line_3>(&*firstIntersect), topPlane); //calculate intersection of resulting line and top plane to get final point
     K::Point_3 * resPoint = boost::get<K::Point_3>(&*finalIntersect); //grab point out of boosted result
     std::cout << *resPoint << std::endl;
-    
+
     // Take orientation of long edge and use our calculated position
     Eigen::Matrix4d resultPose = longPose;
     resultPose(0,3) = CGAL::to_double(resPoint->x());
@@ -203,9 +203,9 @@ int main(int argc, char* argv[])
         return false;
     }
 
-    
+
     // Send TF to our server
-    robothon2023::AddTf2 addTF_srv;
+    MSVC2024_Setup_2024::AddTf2 addTF_srv;
     tf::transformEigenToMsg(Eigen::Isometry3d(resultPose), addTF_srv.request.pose.transform);
     addTF_srv.request.pose.header.stamp = ros::Time::now();
     addTF_srv.request.pose.header.frame_id = parent_frame;
@@ -219,7 +219,7 @@ int main(int argc, char* argv[])
     freedrive_srv.request.IO = false;
     client_f.call(freedrive_srv);
     /*
-    UNCOMMENT THIS FOR LOGGING 
+    UNCOMMENT THIS FOR LOGGING
     ros::Duration(5).sleep();
     geometry_msgs::Transform transfrom_touch;
     transfrom_touch = tfBuffer.lookupTransform("base_link", "task_board",ros::Time(0)).transform;
@@ -238,6 +238,6 @@ int main(int argc, char* argv[])
     myfile << transfrom_detection.rotation.x << "," << transfrom_detection.rotation.y << "," << transfrom_detection.rotation.z << "," << transfrom_detection.rotation.w << "\n";
     myfile.close();
     */
-    
+
     return 0;
 }

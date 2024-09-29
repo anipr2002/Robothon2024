@@ -1,3 +1,12 @@
+'''
+    @file triangle_lab.py
+    @authors Shubham Joshi (shubham.joshi@study.thws.de),
+    @brief Program to detect ports
+    @version 0.1
+
+    @copyright Copyright (c) 2024
+'''
+
 from ultralytics import YOLO
 import cv2
 import os
@@ -14,9 +23,9 @@ import ros_numpy
 import tf2_ros
 from tf import transformations
 import sensor_msgs.msg
-from robothon2023.srv import AddTf2
-#from robothon2023.srv import GetBoardLocation, GetBoardLocationResponse
-from geometry_msgs.msg import TransformStamped 
+from MSVC2024_Setup_2024.srv import AddTf2
+#from MSVC2024_Setup_2024.srv import GetBoardLocation, GetBoardLocationResponse
+from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import Transform
 from scipy.spatial.transform import Rotation
 
@@ -51,7 +60,7 @@ def service_callback(req):
             return None
     else:
         return None
-    
+
 
 def portDetector(image, x_min=0, y_min=0):
     model = YOLO('latest_port_det_model.pt')
@@ -79,11 +88,11 @@ def portDetector(image, x_min=0, y_min=0):
             center_y = y + h / 2 + y_min
             if w > h:
                 orientation = 0 # corresponds to horizontal
-            else:  
+            else:
                 orientation = 90 # corresponds to vertical
             simple_box = [cls, center_x, center_y, orientation]
             ports.append(simple_box)
-        
+
     return ports
 
 
@@ -115,7 +124,7 @@ def zedImgCallBack(data):
 
 
 def imgToWorld(image_coords, z_distance, camera_intrinsics):
-    
+
     fx, fy = camera_intrinsics[0, 0], camera_intrinsics[1, 1]
     cx, cy = camera_intrinsics[0, 2], camera_intrinsics[1, 2]
 
@@ -130,7 +139,7 @@ def imgToWorld(image_coords, z_distance, camera_intrinsics):
 
 
 def worldToBase(world_coords, camera_pose):
-   
+
     world_coords_homogeneous = np.hstack((world_coords, np.ones((world_coords.shape[0], 1))))
     robot_base_coords_homogeneous = camera_pose @ world_coords_homogeneous.T
     robot_base_coords = robot_base_coords_homogeneous[:3, :].T
@@ -144,7 +153,7 @@ def PortDetection(ros_deploy=True, detect=True):
         try:
             idsImage = bridge.imgmsg_to_cv2(idsBuf, desired_encoding='passthrough')
             tmp = idsImage.copy()
-            idsImage = tmp # to make idsImage writable 
+            idsImage = tmp # to make idsImage writable
             #print("idsImage shape: ", idsImage.shape)
             #idsImage = cv2.resize(tmp, (1362, 923))
             # cv_image = bridge.imgmsg_to_cv2(idsBuf, "bgr8")
@@ -157,12 +166,12 @@ def PortDetection(ros_deploy=True, detect=True):
             result = portDetector(image, crop_x, crop_y)
             print(result)
             cv2.imwrite('/home/robothon/portDetectionTest.png', idsImage) # for debugging
-            
+
             z_distance = 0.9
             camera_intrinsics = np.array([[6.59120557e+03, 0.00000000e+00, 2.72294039e+03],
                                           [0.00000000e+00, 6.59485693e+03, 1.83543881e+03],
                                           [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
-            
+
             image_coords = [(d[1], d[2]) for d in result]
             world_coords = imgToWorld(image_coords, z_distance, camera_intrinsics)
 
@@ -198,7 +207,7 @@ def PortDetection(ros_deploy=True, detect=True):
             return []
     else:
         return None
-       
+
 
 if __name__ == "__main__":
 

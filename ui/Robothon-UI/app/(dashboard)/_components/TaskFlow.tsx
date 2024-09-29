@@ -1,5 +1,14 @@
 // @ts-nocheck
 
+/**
+ * @file TaskFlow.tsx
+ * @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)\
+ * @brief Task Flow component
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
+
 "use client";
 import React, { useCallback, useState } from "react";
 import {
@@ -108,7 +117,7 @@ const initialNodes = [
     id: "4",
     position: { x: 200, y: 150 },
     data: { label: "Measure" },
-    type: "taskNode"
+    type: "taskNode",
   },
   {
     id: "5",
@@ -182,35 +191,33 @@ const TaskFlow = () => {
   const getTaskOrder = (): number[] => {
     const order: string[] = [];
     const visited = new Set<string>();
-  
+
     const dfs = (nodeId: string) => {
       if (visited.has(nodeId)) {
         return;
       }
       visited.add(nodeId);
-  
+
       const outgoingEdges = edges.filter((edge) => edge.source === nodeId);
       for (const edge of outgoingEdges) {
         dfs(edge.target);
       }
-  
+
       order.unshift(nodeId);
     };
-  
+
     // Start with the 'start' node
     dfs("start");
-  
+
     // Convert node IDs to numbers, excluding the 'start' node
-    return order
-      .filter((id) => id !== "start")
-      .map((id) => Number(id));
+    return order.filter((id) => id !== "start").map((id) => Number(id));
   };
-  
+
   const handleGetOrder = async () => {
     const taskOrder = getTaskOrder();
     if (taskOrder.length > 0) {
       setTasks([0, ...taskOrder]); // Add 0 for the start node
-  
+
       console.log(JSON.stringify({ tasks: [0, ...taskOrder] }));
       try {
         const response = await fetch("http://localhost:8080/post", {
@@ -218,9 +225,9 @@ const TaskFlow = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ tasks: [0,100, ...taskOrder] }),
+          body: JSON.stringify({ tasks: [0, 100, ...taskOrder] }),
         });
-  
+
         if (response.ok) {
           toast({
             title: "Success 🎉",
@@ -249,7 +256,7 @@ const TaskFlow = () => {
       });
     }
   };
-  
+
   return (
     <div style={{ height: "100%", width: "100%" }}>
       <ReactFlow

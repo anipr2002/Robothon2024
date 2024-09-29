@@ -1,14 +1,14 @@
 /**
  * @file point_recording.cpp
- * @authors Adrian Müller (adrian.mueller@study.thws.de), 
+ * @authors Adrian Müller (adrian.mueller@study.thws.de),
  *          Maximilian Hornauer (maximilian.hornauer@study.thws.de),
  *          Usama Ali (usama.ali@study.thws.de)
  * @brief Program for recording points by using freedrive
  * @version 0.1
  * @date 2023-03-29
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 
 #include <filesystem>
@@ -31,7 +31,7 @@
 
 #include <ur_ros_driver/SetFreedrive.h>
 #include <ur_ros_driver/SetCartTarget.h>
-#include <robothon2023/AddTf2.h>
+#include <MSVC2024_Setup_2024/AddTf2.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <ur_ros_driver/StartJog.h>
 #include <ur_ros_driver/JogControl.h>
@@ -66,9 +66,9 @@ void tcpCallback(const geometry_msgs::TransformStamped& msg)
 
 
 // ur_ros_driver::SetCartTarget align_robot_to_base_axis(std::string axis){
-    
+
 //     //#TODO Add negative alignment
-    
+
 //     ur_ros_driver::SetCartTarget target_srv;
 //     target_srv.request.mode = 1;
 //     target_srv.request.speed = 0.25;
@@ -118,7 +118,7 @@ void tcpCallback(const geometry_msgs::TransformStamped& msg)
 // }
 
 // ur_ros_driver::SetCartTarget align_robot_to_base_axis_90(){
-    
+
 //     ur_ros_driver::SetCartTarget target_srv;
 //     target_srv.request.mode = 1;
 //     target_srv.request.speed = 0.25;
@@ -134,9 +134,9 @@ void tcpCallback(const geometry_msgs::TransformStamped& msg)
 
 //     // ROS_INFO("rpy before: %f, %f, %f", roll, pitch, yaw);
 
-//     roll = round(roll / (M_PI / 2)) * (M_PI / 2); 
-//     pitch = round(pitch / (M_PI / 2)) * (M_PI / 2); 
-//     yaw = round(yaw / (M_PI / 2)) * (M_PI / 2); 
+//     roll = round(roll / (M_PI / 2)) * (M_PI / 2);
+//     pitch = round(pitch / (M_PI / 2)) * (M_PI / 2);
+//     yaw = round(yaw / (M_PI / 2)) * (M_PI / 2);
 
 //     // ROS_INFO("rpy after: %f, %f, %f", roll, pitch, yaw);
 
@@ -178,20 +178,20 @@ int main(int argc, char* argv[])
     ros::ServiceClient client_f = n.serviceClient<ur_ros_driver::SetFreedrive>("/ur_hardware_interface/set_freedive");
     ros::ServiceClient client_fm = n.serviceClient<ur_ros_driver::SetForceTarget>("/ur_hardware_interface/set_force_mode");
     ros::ServiceClient client_t = n.serviceClient<ur_ros_driver::SetCartTarget>("/ur_hardware_interface/set_cart_target");
-    ros::ServiceClient client_tf = n.serviceClient<robothon2023::AddTf2>("/store_tf");
+    ros::ServiceClient client_tf = n.serviceClient<MSVC2024_Setup_2024::AddTf2>("/store_tf");
     ros::ServiceClient jog_client = n.serviceClient<ur_ros_driver::StartJog>("/ur_hardware_interface/start_jog");
-    
+
     ros::Subscriber sub = n.subscribe("/ur_hardware_interface/tcp_pose", 1000, tcpCallback);
 
     ros::Publisher jog_control_pub = n.advertise<ur_ros_driver::JogControl>("/jog_control",1000);
-    
+
     tf2_ros::Buffer tfBuffer;
     tf2_ros::TransformListener tfListener(tfBuffer);
 
     ros::AsyncSpinner spinner(2);
     spinner.start();
 
-    robothon2023::AddTf2 addTF_srv;
+    MSVC2024_Setup_2024::AddTf2 addTF_srv;
     ur_ros_driver::SetFreedrive freedrive_srv;
     freedrive_srv.request.IO = true;
     freedrive_srv.request.free_axes = free_axes;
@@ -233,20 +233,20 @@ int main(int argc, char* argv[])
            {
             std::cout << "Punktname: ";
             std::cin >> point_ID;
-            
+
             std::string parent_frame = "base_adj"; // default parent frame
-            
+
             std::cout << "Add z Offset ? [mm] ";
             std::cin >> offset;
             std::cout << "Is this Pose in relation to the target ? [1/0] ";
             std::cin >> relation;
-            
+
             if(relation)
             {
                 std::cout << "Choose the parent frame:\n1. task_board\n2. byod_board\nSelection: ";
                 int parent_selection;
                 std::cin >> parent_selection;
-                
+
                 if(parent_selection == 1)
                 {
                     parent_frame = "task_board";
@@ -260,15 +260,15 @@ int main(int argc, char* argv[])
             {
                 parent_frame = "base_adj";
             }
-            
+
             addTF_srv.request.pose = tcp_pose;
             addTF_srv.request.pose.header.stamp = ros::Time::now();
             addTF_srv.request.pose.header.frame_id = parent_frame;
             addTF_srv.request.pose.child_frame_id = point_ID;
             addTF_srv.request.relative = relation;
-            
+
             client_tf.call(addTF_srv);
-            
+
             if(offset != 0) {
                 addTF_srv.request.pose.transform = geometry_msgs::Transform();
                 addTF_srv.request.pose.transform.translation.z = -1 * offset / 1000;
@@ -322,7 +322,7 @@ int main(int argc, char* argv[])
                     std::cout << "Put in values for r,p,y (1/0)" << std::endl;
                     for(int i=3;i<6;i++){std::cin >> free_axes[i];}
                     break;
-                
+
                 default:
                     break;
                 }
@@ -336,10 +336,10 @@ int main(int argc, char* argv[])
                 break;
             }
         case 4:
-            {  
+            {
                 freedrive_srv.request.IO = false;
                 client_f.call(freedrive_srv);
-                geometry_msgs::Transform taskboard = tfBuffer.lookupTransform("base", "task_board" ,ros::Time(0)).transform; 
+                geometry_msgs::Transform taskboard = tfBuffer.lookupTransform("base", "task_board" ,ros::Time(0)).transform;
                 bool running = true;
                 int feature = 1;
                 //double step = 0.001;
@@ -356,9 +356,9 @@ int main(int argc, char* argv[])
                 struct termios cooked, raw;
                 tcgetattr(kfd, &cooked);
                 memcpy(&raw, &cooked, sizeof(struct termios));
-                
+
                 raw.c_lflag &=~ (ICANON | ECHO);
-                // Setting a new line, then end of file                         
+                // Setting a new line, then end of file
                 raw.c_cc[VEOL] = 1;
                 raw.c_cc[VEOF] = 2;
                 tcsetattr(kfd, TCSANOW, &raw);
@@ -368,7 +368,7 @@ int main(int argc, char* argv[])
 
                 while(ros::ok() && running){
                     Eigen::Matrix4d deltaP = Eigen::Matrix4d::Identity();
-                    
+
                     //char c = getc(stdin);
                     char c;
                     if(read(kfd, &c, 1) < 0)
@@ -401,7 +401,7 @@ int main(int argc, char* argv[])
                         break;
                     case 'q':
                         deltaP(2,3) += step;
-                        break;        
+                        break;
                     case 'j':
                         deltaP.block<3,3>(0,0) = Eigen::AngleAxisd(-step * M_PI, Eigen::Vector3d::UnitX()).matrix();
                         break;
@@ -456,7 +456,7 @@ int main(int argc, char* argv[])
                     //msg.feature = feature;
                     //msg.speeds = speeds;
                     //jog_control_pub.publish(msg);
-                    
+
                     //std::cout << "set Frame" << std::endl;
                     geometry_msgs::Transform null;
                     null.rotation.w = 0;
@@ -466,7 +466,7 @@ int main(int argc, char* argv[])
                     Eigen::Isometry3d robotPose_Iso;
                     tf::transformMsgToEigen(tcp_pose.transform, robotPose_Iso);
                     Eigen::Matrix4d robotPose_Mat = robotPose_Iso.matrix();
-                    Eigen::Matrix4d resPose; 
+                    Eigen::Matrix4d resPose;
                     if(feature == 0){
                         resPose = robotPose_Mat;
                         resPose(0,3) += deltaP(0, 3);
@@ -492,14 +492,14 @@ int main(int argc, char* argv[])
                         resPose(2,3) += deltaP(2, 3);
                         resPose.block<3,3>(0,0) = deltaP.block<3,3>(0,0) * resPose.block<3,3>(0,0);
                     }
-                    
+
                     tf::transformEigenToMsg(Eigen::Isometry3d(resPose), target_srv.request.cartesian_goal);
                     client_t.call(target_srv);
-                    
+
                     jog_menu(feature, step, stepIncrement);
                     //ros::Duration(0.05).sleep();
                 }
-                
+
                 //srv.request.IO = false;
                 //jog_client.call(srv);
                 force_srv.request.IO = false;
@@ -508,7 +508,7 @@ int main(int argc, char* argv[])
                 freedrive_srv.request.IO = true;
                 client_f.call(freedrive_srv);
                 break;
-            
+
             }
     case 7:
             {
@@ -713,7 +713,7 @@ int main(int argc, char* argv[])
                     gripper_srv.request.position = 0;
                     gripper_srv.request.force = 100;
                     break;
-                
+
                 default:
                     break;
                 }
@@ -733,7 +733,7 @@ int main(int argc, char* argv[])
 
 
 void main_menu()
-{   
+{
     system("clear");
     std::cout << "------------------------" << std::endl;
     std::cout << "Main Menu" << std::endl;
@@ -744,12 +744,12 @@ void main_menu()
     std::cout << "3 - set constrains" << std::endl;
     std::cout << "4 - move remotely" << std::endl;
     std::cout << "5 - move to tf (by name)" << std::endl;
-    std::cout << "6 - move Gripper" << std::endl;   
+    std::cout << "6 - move Gripper" << std::endl;
     std::cout << "7 - move to tf (by ID)" << std::endl;
     std::cout << "0 - Quit" << std::endl;
     std::cout << "------------------------" << std::endl;
     std::cout << "Current Position: " << std::endl;
-    std::cout << "\rX: " << tcp_pose.transform.translation.x << "\t Y: " << tcp_pose.transform.translation.y << "\t Z: " << tcp_pose.transform.translation.z << std::endl; 
+    std::cout << "\rX: " << tcp_pose.transform.translation.x << "\t Y: " << tcp_pose.transform.translation.y << "\t Z: " << tcp_pose.transform.translation.z << std::endl;
     std::cout << "\rRX: " << tcp_pose.transform.rotation.x << "\t RY: " << tcp_pose.transform.rotation.y << "\t RZ: "<< tcp_pose.transform.rotation.z << "\t RW: "<< tcp_pose.transform.rotation.w << std::endl;
     std::cout << std::endl;
     std::cout << "Current Constrains: ";
@@ -839,4 +839,3 @@ void jog_menu(int feature, double speed, double step)
     std::cout << "\rFrame: " << frames[feature] << std::endl;
     std::cout << "------------------------" << std::endl;
 }
-

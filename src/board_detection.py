@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 '''
     @file board_detection.py
-    @authors Adrian Müller (adrian.mueller@study.thws.de), 
+    @authors Adrian Müller (adrian.mueller@study.thws.de),
             Maximilian Hornauer (maximilian.hornauer@study.thws.de),
             Usama Ali (usama.ali@study.thws.de)
     @brief Program to detect the taskboard
@@ -28,9 +28,9 @@ import tf2_ros
 from tf import transformations
 
 import sensor_msgs.msg
-from robothon2023.srv import AddTf2
-from robothon2023.srv import GetBoardLocation, GetBoardLocationResponse
-from geometry_msgs.msg import TransformStamped 
+from MSVC2024_Setup_2024.srv import AddTf2
+from MSVC2024_Setup_2024.srv import GetBoardLocation, GetBoardLocationResponse
+from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import Transform
 
 from scipy.spatial.transform import Rotation
@@ -59,14 +59,14 @@ def rotation_matrix_from_euler_angles(x, y, z):
 def solve_for_x(Y, R):
     # Define the identity matrix
     I = np.eye(3)
-    
+
     # Compute (R + I)
     R_plus_I = R + I
 
     # Check if the matrix is invertible
     if np.linalg.det(R_plus_I) == 0:
         raise ValueError("The matrix R + I is not invertible.")
-    
+
     # Compute the inverse of (R + I)
     R_plus_I_inv = np.linalg.inv(R_plus_I)
 
@@ -102,7 +102,7 @@ def service_callback(req):
 
         cam = transformStamped_to_numpy(tfBuffer.lookup_transform('base_adj', 'ids_cam', rospy.Time()))
         print("cam before modification: ", cam) # for debugging
-        cam[2,3] += 0.009 
+        cam[2,3] += 0.009
         print("cam after modification: ", cam) # for debugging
         print("M: ", M) # for debugging
         tb  = cam @ M
@@ -156,7 +156,7 @@ def zedImgCallBack(data):
     global zedBuf
     zedBuf = data
 
-### Image Detection 
+### Image Detection
 def findBlueBnt(image):
     try:
         img = image.copy()
@@ -186,14 +186,14 @@ def findBlueBnt(image):
         #cv2.destroyAllWindows()
 
         bluecircle = np.reshape(bluecircle, (1,3))
-        
+
         return bluecircle
     except Exception as e:
         print("No blue button -->" + str(e) )
         #cv2.imshow("Time "+str(j) , cv2.resize(image, (1384, 923)))
         #cv2.waitKey(500)
         #cv2.destroyAllWindows()
-        
+
         return None
 
 def findRedCircels(image):
@@ -230,13 +230,13 @@ def findRedCircels(image):
         redconnectorbig = cv2.HoughCircles(redmask, cv2.HOUGH_GRADIENT, 1, minDist = 5000, param1 = 50, param2 = 10, minRadius= 53, maxRadius=61)
 
         redconnectorsmall = cv2.HoughCircles(redmask, cv2.HOUGH_GRADIENT, 1, minDist = 5000, param1 = 50, param2 = 10, minRadius= 10, maxRadius=19)
-        
+
         #redbutton
         if redcircle is not None:
             cv2.circle(image, (int(redcircle[0][0][0]), int(redcircle[0][0][1])), 3, (0,165,255), 3, cv2.LINE_AA)
             cv2.circle(image, (int(redcircle[0][0][0]), int(redcircle[0][0][1])), int(redcircle[0][0][2]), (0,255,0), 3, cv2.LINE_AA)
             cv2.putText(image, "2", (int(redcircle[0][0][0]), int(redcircle[0][0][1])), cv2.LINE_AA, 2, (0, 165,255), 6)
-        
+
         #connector
         #caclulate
         if redconnectorbig is not None and redconnectorsmall is not None:
@@ -278,21 +278,21 @@ def findRedCircels(image):
         #print(redconnector)
         redconnector = np.reshape(redconnector, (1,3))
         redcircle = np.reshape(redcircle, (1,3))
-        
+
         return redcircle, redconnector
     except Exception as e:
         print("No red button/connector--> " + str(e))
         #cv2.imshow("Time "+str(j) , cv2.resize(image, (1384, 923)))
         #cv2.waitKey(500)
         #cv2.destroyAllWindows()
-        
+
         return None, None
-    
+
 def findRedM5(image):
     try:
         img = image.copy()
         hsvimg = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        #blackimg = np.zeros_like(crop) 
+        #blackimg = np.zeros_like(crop)
         #lowerred = np.array([0, 70, 50])
         #upperred = np.array([13, 255, 255])
         #redmask = cv2.inRange(hsvimg, lowerred, upperred)
@@ -320,7 +320,7 @@ def findRedM5(image):
         cnts1, _ = cv2.findContours(redmask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         for cnt in cnts1:
             area = cv2.contourArea(cnt)
-            
+
             if area > 65000 and area < 80000:
                 #print("area cont " + str(area))
                 rect= cv2.minAreaRect(cnt)
@@ -340,15 +340,15 @@ def findRedM5(image):
                     #cv2.drawContours(blackimg, [redbox], -1, (255,255,255), cv2.FILLED)
 
                     middleredbox = np.reshape(box, (1,3))
-                   
+
                     return middleredbox
-                
+
         #redbox = np.reshape(redbox, (4,2))
 
         #cv2.imshow("red m5" , cv2.resize(blackimg, (1384, 923)))
         #cv2.waitKey(500)
         #cv2.destroyAllWindows()
-        
+
         #, blackimg
         return None
     except Exception as e:
@@ -356,9 +356,9 @@ def findRedM5(image):
         #cv2.imshow("Time "+str(j) , cv2.resize(image, (1384, 923)))
         #cv2.waitKey(500)
         #cv2.destroyAllWindows()
-        
+
         return None#, crop
-    
+
 def caculateRotation(bluecircle, redcircle, redM5, image):
     #bluecircle and redcircle as reference
     try:
@@ -389,30 +389,30 @@ def caculateRotation(bluecircle, redcircle, redM5, image):
         print("No angle found --> " + str(e))
         return None
 
-    
+
     #if bluecircle is not None and redconnector is not None:
     #    angle = np.degrees(math.atan2(bluecircle[0][1]-redconnector[0][1], bluecircle[0][0]-redconnector[0][0]))
     #    angle = (angle +360) % 360
     #    brcc = angle
     #if redcircle is not None and redconnector is not None:
     #    angle = np.degrees(math.atan2(redcircle[0][1]-redconnector[0][1], redcircle[0][0]-redconnector[0][0]))
-    #    angle = (angle +360) % 360    
+    #    angle = (angle +360) % 360
     #if redconnector is not None and redM5 is not None:
     #    angle = np.degrees(math.atan2(redconnector[0][1]-redM5[0][1], redconnector[0][0]-redM5[0][0]))
     #    angle = (angle +360) % 360
-    #    
+    #
     #    rcrm5 = angle
-    
+
 def caculateMask(bluecircle, redcircle, angle, image):
     circlesize = 80
-    
+
     try:
         blackimg1 = np.zeros_like(image)
         #blackimg2 = np.zeros_like(image)
 
         if bluecircle is not None:
             #distance 226.9423 distance 775.1134 distance 867.61676 distance 1139.5376 distance 1673.3059 distance 1872.0208
-            
+
             x1 = bluecircle[0][0] + 227 * np.cos(np.radians(angle+43))
             y1 = bluecircle[0][1] + 227 * np.sin(np.radians(angle+43))
             x2 = bluecircle[0][0] + 775 * np.cos(np.radians(angle-77))
@@ -433,7 +433,7 @@ def caculateMask(bluecircle, redcircle, angle, image):
             #cv2.circle(image, (int(x5), int(y5)), 3, (0,165,255), 3)
             #cv2.circle(image, (int(x6), int(y6)), 3, (0,165,255), 3)
 
-            #create the mask 
+            #create the mask
             cv2.circle(blackimg1, (int(x1), int(y1)), circlesize, (255,255,255), cv2.FILLED)
             cv2.circle(blackimg1, (int(x2), int(y2)), circlesize, (255,255,255), cv2.FILLED)
             cv2.circle(blackimg1, (int(x3), int(y3)), circlesize, (255,255,255), cv2.FILLED)
@@ -452,7 +452,7 @@ def caculateMask(bluecircle, redcircle, angle, image):
 
         elif redcircle is not None:
             #distance 317.1101 distance 759.98346 distance 806.2238 distance 1059.7273 distance 1687.8118 distance 1824.4368
-            
+
             x1 = redcircle[0][0] + 317 * np.cos(np.radians(angle+30))
             y1 = redcircle[0][1] + 317 * np.sin(np.radians(angle+30))
             x2 = redcircle[0][0] + 806.2  * np.cos(np.radians(angle-70))
@@ -473,7 +473,7 @@ def caculateMask(bluecircle, redcircle, angle, image):
             #cv2.circle(image, (int(x5), int(y5)), 3, (0,165,255), 3)
             #cv2.circle(image, (int(x6), int(y6)), 3, (0,165,255), 3)
 
-            #create the mask 
+            #create the mask
             cv2.circle(blackimg1, (int(x1), int(y1)), circlesize, (255,255,255), cv2.FILLED)
             cv2.circle(blackimg1, (int(x2), int(y2)), circlesize, (255,255,255), cv2.FILLED)
             cv2.circle(blackimg1, (int(x3), int(y3)), circlesize, (255,255,255), cv2.FILLED)
@@ -489,7 +489,7 @@ def caculateMask(bluecircle, redcircle, angle, image):
             #cv2.waitKey(10)
             #cv2.imshow("blackimg2", cv2.resize(newimg2, (1280,720)))
             #cv2.waitKey(0)
-            
+
         return newimg1 #, newimg2
     except Exception as e:
         print("Error mask image --> " + str(e))
@@ -497,7 +497,7 @@ def caculateMask(bluecircle, redcircle, angle, image):
 
 def findBlaCircels(Image, mask1, bluecircle, redcircle):
 
-    
+
 
     graymask = cv2.cvtColor(mask1, cv2.COLOR_BGR2GRAY)
     #graymask = cv2.bitwise_not(graymask)
@@ -511,7 +511,7 @@ def findBlaCircels(Image, mask1, bluecircle, redcircle):
     graymask1 = cv2.morphologyEx(graymask1, cv2.MORPH_CLOSE, kernel, iterations=1)
     #cv2.imshow("black mask " , cv2.resize(graymask1, (1280, 720)))
     #cv2.waitKey(0)
-        
+
     blackcircels = cv2.HoughCircles(graymask1, cv2.HOUGH_GRADIENT, 1, minDist=300, param1=50 , param2=5, minRadius=23, maxRadius=32 )
     #print("black circles: " + str(blackcircels))
     blackcircels = np.reshape(blackcircels, (np.shape(blackcircels)[1],3))
@@ -519,7 +519,7 @@ def findBlaCircels(Image, mask1, bluecircle, redcircle):
 
     sortedpoints = None
     if blackcircels is not None:
-        i = 1    
+        i = 1
         distances = []
         centers = []
         if bluecircle is not None:
@@ -543,25 +543,25 @@ def findBlaCircels(Image, mask1, bluecircle, redcircle):
                     if i == 1:
                         sortedpoints[i+1][:] = blackcircels[pos][:]
                         cv2.circle(Image, (int(sortedpoints[i+1][0]), int(sortedpoints[i+1][1])), 3, (0,165,255), 3, cv2.LINE_AA)
-                        cv2.circle(Image, (int(sortedpoints[i+1][0]), int(sortedpoints[i+1][1])), int(blackcircels[pos][2]), (0,255,0), 3, cv2.LINE_AA) 
+                        cv2.circle(Image, (int(sortedpoints[i+1][0]), int(sortedpoints[i+1][1])), int(blackcircels[pos][2]), (0,255,0), 3, cv2.LINE_AA)
                         cv2.putText(Image, str(i+6), (int(sortedpoints[i+1][0]), int(sortedpoints[i+1][1])), cv2.LINE_AA, 2, (0, 165, 255), 6)
                     elif i == 2:
                         sortedpoints[i-1][:] = blackcircels[pos][:]
                         cv2.circle(Image, (int(sortedpoints[i-1][0]), int(sortedpoints[i-1][1])), 3, (0,165,255), 3, cv2.LINE_AA)
-                        cv2.circle(Image, (int(sortedpoints[i-1][0]), int(sortedpoints[i-1][1])), int(blackcircels[pos][2]), (0,255,0), 3, cv2.LINE_AA) 
+                        cv2.circle(Image, (int(sortedpoints[i-1][0]), int(sortedpoints[i-1][1])), int(blackcircels[pos][2]), (0,255,0), 3, cv2.LINE_AA)
                         cv2.putText(Image, str(i+4), (int(sortedpoints[i-1][0]), int(sortedpoints[i-1][1])), cv2.LINE_AA, 2, (0, 165, 255), 6)
                     else:
                         sortedpoints[i][:] = blackcircels[pos][:]
                         cv2.circle(Image, (int(sortedpoints[i][0]), int(sortedpoints[i][1])), 3, (0,165,255), 3, cv2.LINE_AA)
-                        cv2.circle(Image, (int(sortedpoints[i][0]), int(sortedpoints[i][1])), int(blackcircels[pos][2]), (0,255,0), 3, cv2.LINE_AA) 
+                        cv2.circle(Image, (int(sortedpoints[i][0]), int(sortedpoints[i][1])), int(blackcircels[pos][2]), (0,255,0), 3, cv2.LINE_AA)
                         cv2.putText(Image, str(i+5), (int(sortedpoints[i][0]), int(sortedpoints[i][1])), cv2.LINE_AA, 2, (0, 165, 255), 6)
                     #cv2.imshow("black mask " , cv2.resize(Image, (1280, 720)))
                     #cv2.waitKey(0)
                     #print(sortedpoints)
-                    
-                    
+
+
                     distances[pos] = 10000
-                
+
                 else:
                     if i ==1:
                         sortedpoints[i+1][:] = None
@@ -571,11 +571,11 @@ def findBlaCircels(Image, mask1, bluecircle, redcircle):
                         sortedpoints[i][:] = None
                     #mindstances[i] = mindstances[i+1]
                     #maxidstances[i] = maxidstances[i+1]
-                    
-                
+
+
             #print("sorted points " + str(sortedpoints) )
-        
-        elif redcircle is not None:  
+
+        elif redcircle is not None:
             for blackcircle in blackcircels:
                 #print("black circle -x " + str(blackcircle[0]) + " -y " + str(blackcircle[1]) + " -r " + str(blackcircle[2]))
                 distance = np.linalg.norm(redcircle-blackcircle)
@@ -593,28 +593,28 @@ def findBlaCircels(Image, mask1, bluecircle, redcircle):
                 if mindstances[i] < distances[pos] and maxidstances[i] > distances[pos]:
                     sortedpoints[i][:] = blackcircels[pos][:]
                     cv2.circle(Image, (int(sortedpoints[i][0]), int(sortedpoints[i][1])), 3, (0,165,255), 3, cv2.LINE_AA)
-                    cv2.circle(Image, (int(sortedpoints[i][0]), int(sortedpoints[i][1])), int(blackcircels[pos][2]), (0,255,0), 3, cv2.LINE_AA) 
+                    cv2.circle(Image, (int(sortedpoints[i][0]), int(sortedpoints[i][1])), int(blackcircels[pos][2]), (0,255,0), 3, cv2.LINE_AA)
                     cv2.putText(Image, str(i+5), (int(sortedpoints[i][0]), int(sortedpoints[i][1])), cv2.LINE_AA, 2, (0, 165, 255), 6)
                     distances[pos] = 10000
-        
+
                 else:
                     sortedpoints[i][:] = None
-                
+
             #print("sorted points " + str(sortedpoints) )
 
     return sortedpoints
 
 def caculateRealPoints(bluecircels, redcircels, redconnector, blackcircels):
-    
+
     #newpoints = np.array([[points[0][0][0], points[0][0][1]],[points[1][0][0], points[1][0][1]], [points[2][0][0], points[2][0][1]], [points[3][0][0], points[3][0][1]], [points[4][0][0], points[4][0][1]], [points[5][0][1], points[5][0][1]], [points[6][0][1], points[6][0][1]], [points[7][0][0], points[7][0][1]], [points[8][0][0], points[8][0][1]], [points[9][0][0], points[9][0][1]]])
     #print(newpoints)
     #realPositions = np.array([[0.30445,0.12035,0.003], [0.30445, 0.10635, 0.003], [0.2464, 0.0947, 0.002], [0.3037, 0.053, 0.014], [0.32415,0.14185,-0.002], [0.32415, 0.01055,-0.002], [0.12685, 0.14185, -0.002], [0.12685, 0.01055,-0.002], [0.01055, 0.14185,-0.002], [0.01055, 0.01055,-0.002]])
     #realPositions = np.array([[0.30445,0.12035,0.000], [0.30445, 0.10635, 0.000], [0.2464, 0.0947, 0.000], [0.3037, 0.053, 0.014], [0.32415,0.14185,0.0], [0.32415, 0.01055,0.0], [0.12685, 0.14185, 0.0], [0.12685, 0.01055,0.0], [0.01055, 0.14185,0.0], [0.01055, 0.01055,0.0]])
-    
+
     ################### These values are for the 2023 taskboard detection. I am commenting them out to get correct taskboard tf for 24. realPositions found below commented section for 2024
-    
+
     ################## 2023 values (red M5)
-    
+
     # realPositions = np.array([[0.2232, 0.1199,0.003],   # center of blue button
     #                           [0.2232, 0.1058, 0.003],  # center of red button
     #                           [0.1653, 0.0947, 0.002],  # center of red jack
@@ -636,18 +636,18 @@ def caculateRealPoints(bluecircels, redcircels, redconnector, blackcircels):
                               [0.224, 0.105, 0.003],  # center of red button                            xx
                               [0.1665, 0.0947, 0.002],  # center of red jack                            xx
                               [0.2195, 0.0525, 0.014], # M5 center                                      xx
-                              [0.2432, 0.1415,-0.002],  # far contralateral screw hole                  xx    
+                              [0.2432, 0.1415,-0.002],  # far contralateral screw hole                  xx
                               [0.2432, 0.011,-0.002],  # far ipsilateral screw hole                     xx
                               [0.1275, 0.1415, -0.002],  # middle contralateral screwhole               xx
                               [0.1275, 0.011,-0.002],   # middle ipsilateral screwhole                  xx
                               [0.011, 0.1415,-0.002],  # close contralateral screwhole                  xx
                               [0.011, 0.011,-0.002]]) # close ipsilateral screwhole                     xx
-    # red dimension is first value, green dimension is 2nd value, blue dimension is 3rd value           
+    # red dimension is first value, green dimension is 2nd value, blue dimension is 3rd value
     # Measured from the corner closest to the 3d-printed holder for the multimeter probe
 
     picpoints = []
     realpoints = []
-    
+
     if bluecircels is not None:
         picpoints.append([bluecircels[0][0], bluecircels[0][1]])
         realpoints.append([realPositions[0][0], realPositions[0][1], realPositions[0][2]])
@@ -664,7 +664,7 @@ def caculateRealPoints(bluecircels, redcircels, redconnector, blackcircels):
         realpoints.append([realPositions[2][0], realPositions[2][1], realPositions[2][2]])
     else:
         print("point red connector not detected for pnp")
-    
+
     if redM5 is not None:
         picpoints.append([redM5[0][0], redM5[0][1]])
         realpoints.append([realPositions[3][0], realPositions[3][1], realPositions[3][2]])
@@ -692,7 +692,7 @@ def caculateRealPoints(bluecircels, redcircels, redconnector, blackcircels):
 
 def caculatePosition2Base(pic, real, image):
 
-    Kmat = np.array([[6.59120557e+03, 0.00000000e+00, 2.72294039e+03],[ 0.00000000e+00, 6.59485693e+03, 1.83543881e+03], [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]]) 
+    Kmat = np.array([[6.59120557e+03, 0.00000000e+00, 2.72294039e+03],[ 0.00000000e+00, 6.59485693e+03, 1.83543881e+03], [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
     Dmat = np.array([0.0,0.0,0.0,0.0,0.0])
 
     #rvecCam = np.array([1.99538456e+000, 1.05741672e+250, -1.77548583e-003])
@@ -718,7 +718,7 @@ def caculatePosition2Base(pic, real, image):
     cv2.line(image,imgCorners[2][0],imgCorners[3][0], [0,255,255],5)
     cv2.line(image,imgCorners[3][0],imgCorners[0][0], [0,255,255],5)
     #print("tvec " + str(tvecTask) + " rvec " +str(rvecTask))
-   
+
 
     # Taskboard
     rotmatTask, _ = cv2.Rodrigues(rvecTask)
@@ -729,7 +729,7 @@ def caculatePosition2Base(pic, real, image):
     #matTask = np.linalg.inv(matTask)
 
     # Camera
-    rotmatCam, _ = cv2.Rodrigues(np.reshape(rvecCam,(3,1))) 
+    rotmatCam, _ = cv2.Rodrigues(np.reshape(rvecCam,(3,1)))
     print(rotmatCam)
     transmatCam = np.reshape(tvecCam, (3,1))
     matCam = np.eye(4)
@@ -741,7 +741,7 @@ def caculatePosition2Base(pic, real, image):
     print("Meddy matCam:", matCam)
 
     M = matCam @ matTask
-   
+
     print("Meddy M", M)
 
     return matTask
@@ -750,15 +750,15 @@ def caculatePosition2Base(pic, real, image):
 
     """
         for i in range(np.shape(points)[0]):
-            
+
             if np.isnan(points[i]) == True:
-                
+
             else:
                 #outPicPositions = np.append(outPicPositions, [points[i][0], points[i][1]], axis= 0)
                 #outRealPositions = np.append(outRealPositions, realPositions[i][:], axis = 0)
                 outPicPositions.append([points[i][0], points[i][1]])
                 outRealPositions.append([realPositions[i][0], realPositions[i][1], realPositions[i][2]])
-                
+
     else:
         print("worng array dimensions")
         newPic = np.array(outPicPositions)
@@ -774,7 +774,7 @@ def BoardDetetction():
     # print("shape of IDS image: ", idsImage.shape) # for debugging
     cv2.imwrite('/home/robothon/idsImageresized.png', cv2.resize(idsImage, (1362, 923))) # for debugging
     #cv2.imshow("image", cv2.resize(idsImage, (1362, 923))) # for debugging
-    
+
     loadImage = idsImage.copy()
     tmp = idsImage.copy()
     idsImage = tmp
@@ -784,12 +784,12 @@ def BoardDetetction():
     redcircle, redconnector = findRedCircels(idsImage)
     #print("red button " +str(redcircle))
     #find the M5 and Diplay more precise
-    redM5 = findRedM5(idsImage)      
+    redM5 = findRedM5(idsImage)
     #Caculate Mask
-    
+
     angle = caculateRotation(bluecircle, redcircle, redM5, idsImage)
     maskedImage = caculateMask(bluecircle, redcircle, angle, loadImage)
-   
+
     blackcircels = findBlaCircels(idsImage, maskedImage, bluecircle, redcircle)
 
     picPoints, realworldPoints = caculateRealPoints(bluecircle, redcircle, redconnector, blackcircels)
@@ -797,14 +797,14 @@ def BoardDetetction():
     print("realPoints: ", realworldPoints) # for debugging
     #print(realworldPoints)
     M = caculatePosition2Base(picPoints, realworldPoints, idsImage)
-    
+
     #cv2.imshow("result", cv2.resize(idsImage, (1362, 923))) # for debugging
     #cv2.waitKey(0)
     cv2.imwrite("/home/robothon/Detected_Task_Board_boar_detection.png", idsImage)
 
     return M, angle
     #return Transform(translation=np.Vector3(*trans),rotation=np.Quaternion(*quat))
-                
+
 
 
 # for capturing images for training
@@ -842,7 +842,7 @@ if __name__ == "__main__":
     rospy.Subscriber("/ids/rgb", sensor_msgs.msg.Image, idsImgCallBack)
     rospy.Subscriber("/zed2/zed_node/rgb_raw/image_raw_color", sensor_msgs.msg.Image, zedImgCallBack)
     s = rospy.Service("/board_detection", GetBoardLocation, service_callback)
-    
+
     bridge = cv_bridge.CvBridge()
 
     #br = tf2_ros.static_transform_broadcaster.StaticTransformBroadcaster()
@@ -857,7 +857,7 @@ if __name__ == "__main__":
     #Observation = False
     #Detection = False
     #Cropimage = False
-    
+
     cnt = 0
     cntTrue = 0
     ids = False
@@ -874,7 +874,7 @@ if __name__ == "__main__":
                 print("started")
                 #Calibrate camera with task board
                 trans = transformStamped_to_numpy(tfBuffer.lookup_transform('base', 'task_board', rospy.Time()))
-                trans[2,3] -= 0.009 
+                trans[2,3] -= 0.009
                 camBase = trans @ np.linalg.inv(M)
                 t = TransformStamped()
                 t.header.stamp = rospy.Time.now()
@@ -890,12 +890,12 @@ if __name__ == "__main__":
                 #t.child_frame_id = 'task_board_pnp'
                 #transl = transformations.translation_from_matrix(M)
                 #rot = transformations.quaternion_from_matrix(M)
-                #t.transform = ros_numpy.msgify(Transform, M) 
+                #t.transform = ros_numpy.msgify(Transform, M)
                 #print("pose: " + str(pose))
-                
+
                  #cam = transformStamped_to_numpy(tfBuffer.lookup_transform('base', 'ids_cam', rospy.Time()))
-                 #cam[2,3] += 0.009 
-                
+                 #cam[2,3] += 0.009
+
                  #tb  = cam @ M
 
                  #tb_euler = Rotation.from_matrix(tb[:3,:3]).as_euler("zyx")
@@ -922,9 +922,9 @@ if __name__ == "__main__":
             if(zedBuf is not None):
                 M = BoardDetetction()
         elif ids == False and detection == True:
-                    
+
             for i in range(0,60):
-                
+
                 #loadImage = cv2.imread('/home/fe-n346/Documents/Pics/4_triangle_ids/' + str(j) + '.png')
                 loadImage = cv2.imread('/home/robothon/Robothon/src/robothon_scripts/Calibration/BoardPic2/' + str(i) + '.png')
                 idsImage = loadImage.copy()
@@ -936,7 +936,7 @@ if __name__ == "__main__":
                 redcircle, redconnector = findRedCircels(idsImage)
                 #print("red button " +str(redcircle))
                 #find the M5 and Diplay more precise
-                #redM5 = findRedM5(idsImage)      
+                #redM5 = findRedM5(idsImage)
                 redM5 = None
                 #Caculate Mask
                 angle = caculateRotation(bluecircle, redcircle, redM5, idsImage)
@@ -944,7 +944,7 @@ if __name__ == "__main__":
                 maskedImage = caculateMask(bluecircle, redcircle, angle, loadImage)
 
                 blackcircels = findBlaCircels(idsImage, maskedImage, bluecircle, redcircle)
-                
+
                 picPoints, realworldPoints = caculateRealPoints(bluecircle, redcircle, redconnector, blackcircels)
 
                 M = caculatePosition2Base(picPoints, realworldPoints, idsImage)
@@ -953,7 +953,7 @@ if __name__ == "__main__":
                 cv2.imshow("result", cv2.resize(idsImage, (1000, 680)))
                 cv2.waitKey(0)
                 cv2.imwrite("/home/robothon/Downloads/", idsImage)
-                
+
 
                 #point = redcircle[0][:2] + np.array([18, -75])
                 #cv2.circle(idsImage, (int(point[0]), int(point[1])), 3, (255,0,0), 3)
@@ -962,12 +962,12 @@ if __name__ == "__main__":
                     cntTrue = cntTrue + 1
 
                 cnt = cnt + 1
-                             
-                
+
+
 
                 if i == 59:
                     print("Sucessrate: " + str(cntTrue/cnt))
                     exit()
-                
-            
+
+
         rate.sleep()

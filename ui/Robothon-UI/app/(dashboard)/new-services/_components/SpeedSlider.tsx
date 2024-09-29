@@ -1,3 +1,11 @@
+/**
+ * @file SpeedSlider.tsx
+ * @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)\
+ * @brief Speed Slider service component
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 "use client";
 import React, { useState } from "react";
 import { Slider } from "@/components/ui/slider";

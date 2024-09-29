@@ -1,3 +1,11 @@
+/**
+ * @file layout.tsx
+ * @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)\
+ * @brief Layout component
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 "use client";
 import React, { useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";

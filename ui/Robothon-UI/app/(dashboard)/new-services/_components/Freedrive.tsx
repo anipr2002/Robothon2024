@@ -1,8 +1,27 @@
-
+/**
+ * @file Freedrive.tsx
+ * @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)\
+ * @brief Freedrive service component
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 "use client";
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -11,7 +30,14 @@ import { Button } from "@/components/ui/button";
 import { set_freedive_service } from "@/utils/services";
 
 const Freedrive = () => {
-  const [freeAxes, setFreeAxes] = useState([false, false, false, false, false, false]);
+  const [freeAxes, setFreeAxes] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
 
   const handleCheckboxChange = (index: number) => {
     setFreeAxes((prev) => {
@@ -24,12 +50,12 @@ const Freedrive = () => {
   const handleSubmit = () => {
     const args = {
       IO: true,
-      free_axes: freeAxes.map(axis => axis ? 1 : 0),
+      free_axes: freeAxes.map((axis) => (axis ? 1 : 0)),
       feature: 1,
       custom_frame: {
         translation: { x: 0, y: 0, z: 0 },
-        rotation: { x: 0, y: 0, z: 0, w: 1 }
-      }
+        rotation: { x: 0, y: 0, z: 0, w: 1 },
+      },
     };
     console.log("Submitting freedrive args:", args);
     // Here you would call your set_freedrive_service function
@@ -61,15 +87,18 @@ const Freedrive = () => {
             <ScrollArea className="h-[200px] w-full rounded-md border p-4">
               <h3 className="font-semibold mb-2">Description</h3>
               <p className="text-sm text-muted-foreground">
-                This service allows you to change the constraints of the robot, enabling manual control of specific axes.
+                This service allows you to change the constraints of the robot,
+                enabling manual control of specific axes.
               </p>
               <h3 className="font-semibold mt-4 mb-2">Usage</h3>
               <p className="text-sm text-muted-foreground">
-                Select the axes you want to free for manual control. When enabled, you can physically move the robot along these axes.
+                Select the axes you want to free for manual control. When
+                enabled, you can physically move the robot along these axes.
               </p>
               <h3 className="font-semibold mt-4 mb-2">Return Value</h3>
               <p className="text-sm text-muted-foreground">
-                This service returns a void value. The effect is immediately applied to the robot's movement constraints.
+                This service returns a void value. The effect is immediately
+                applied to the robot's movement constraints.
               </p>
             </ScrollArea>
           </TabsContent>
@@ -80,10 +109,10 @@ const Freedrive = () => {
                 <p className="text-sm text-muted-foreground mb-4">
                   Select which axes to free for manual control:
                 </p>
-                {['X', 'Y', 'Z', 'RX', 'RY', 'RZ'].map((axis, index) => (
+                {["X", "Y", "Z", "RX", "RY", "RZ"].map((axis, index) => (
                   <div key={axis} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`axis-${axis}`} 
+                    <Checkbox
+                      id={`axis-${axis}`}
                       checked={freeAxes[index]}
                       onCheckedChange={() => handleCheckboxChange(index)}
                     />

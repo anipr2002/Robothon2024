@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>robothon2023</name>
+  <name>MSVC2024_Setup_2024</name>
   <version>1.0.0</version>
-  <description>The robothon2023 package contains the code for team RoboPigs solution to the Robothon 2023 competition</description>
+  <description>The MSVC2024_Setup_2024 package contains the code for team RoboPigs solution to the Robothon 2023 competition</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <maintainer email="adrian.mueller@study.thws.de">Adrian Mueller</maintainer>
@@ -20,7 +20,7 @@
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/robothon2023</url> -->
+  <!-- <url type="website">http://wiki.ros.org/MSVC2024_Setup_2024</url> -->
 
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->

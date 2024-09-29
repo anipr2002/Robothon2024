@@ -1,5 +1,12 @@
 // @ts-nocheck
-// "use server"
+/**
+ * @file services.ts
+ * @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)\
+ * @brief ROS services
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 import * as ROSLIB from 'roslib';
 import tf2 from './tf2.json'
 
@@ -9,7 +16,7 @@ const ros = new ROSLIB.Ros({ encoding: 'ascii' , url: 'ws://localhost:9090'});
 const board_detection = new ROSLIB.Service({
     ros: ros,
     name: '/board_detection',
-    serviceType: 'robothon2023/GetBoardLocationRequest'
+    serviceType: 'MSVC2024_Setup_2024/GetBoardLocationRequest'
     });
 
 const board_detection_service = () => {
@@ -21,7 +28,7 @@ const board_detection_service = () => {
 const touch_detection = new ROSLIB.Service({
     ros: ros,
     name: '/touch_detection',
-    serviceType: 'robothon2023/GetBoardLocationRequest'
+    serviceType: 'MSVC2024_Setup_2024/GetBoardLocationRequest'
     });
 
 

@@ -1,3 +1,11 @@
+/**
+ * @file BoardDetection.tsx
+ * @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)\
+ * @brief Board Detection service component
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 import React from "react";
 import {
   Dialog,

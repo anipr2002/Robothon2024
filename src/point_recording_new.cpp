@@ -1,14 +1,14 @@
 /**
  * @file point_recording.cpp
- * @authors Adrian Müller (adrian.mueller@study.thws.de), 
+ * @authors Adrian Müller (adrian.mueller@study.thws.de),
  *          Maximilian Hornauer (maximilian.hornauer@study.thws.de),
  *          Usama Ali (usama.ali@study.thws.de)
  * @brief Program for recording points by using freedrive
  * @version 0.1
  * @date 2023-03-29
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 
 #include <filesystem>
@@ -31,7 +31,7 @@
 
 #include <ur_ros_driver/SetFreedrive.h>
 #include <ur_ros_driver/SetCartTarget.h>
-#include <robothon2023/AddTf2.h>
+#include <MSVC2024_Setup_2024/AddTf2.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <ur_ros_driver/StartJog.h>
 #include <ur_ros_driver/JogControl.h>
@@ -126,20 +126,20 @@ int main(int argc, char* argv[])
     ros::ServiceClient client_f = n.serviceClient<ur_ros_driver::SetFreedrive>("/ur_hardware_interface/set_freedive");
     ros::ServiceClient client_fm = n.serviceClient<ur_ros_driver::SetForceTarget>("/ur_hardware_interface/set_force_mode");
     ros::ServiceClient client_t = n.serviceClient<ur_ros_driver::SetCartTarget>("/ur_hardware_interface/set_cart_target");
-    ros::ServiceClient client_tf = n.serviceClient<robothon2023::AddTf2>("/store_tf");
+    ros::ServiceClient client_tf = n.serviceClient<MSVC2024_Setup_2024::AddTf2>("/store_tf");
     ros::ServiceClient jog_client = n.serviceClient<ur_ros_driver::StartJog>("/ur_hardware_interface/start_jog");
-    
+
     ros::Subscriber sub = n.subscribe("/ur_hardware_interface/tcp_pose", 1000, tcpCallback);
 
     ros::Publisher jog_control_pub = n.advertise<ur_ros_driver::JogControl>("/jog_control",1000);
-    
+
     tf2_ros::Buffer tfBuffer;
     tf2_ros::TransformListener tfListener(tfBuffer);
 
     ros::AsyncSpinner spinner(2);
     spinner.start();
 
-    robothon2023::AddTf2 addTF_srv;
+    MSVC2024_Setup_2024::AddTf2 addTF_srv;
     ur_ros_driver::SetFreedrive freedrive_srv;
     freedrive_srv.request.IO = true;
     freedrive_srv.request.free_axes = free_axes;
@@ -280,10 +280,10 @@ int main(int argc, char* argv[])
                 break;
             }
         case 4:
-            {  
+            {
                 freedrive_srv.request.IO = false;
                 client_f.call(freedrive_srv);
-                geometry_msgs::Transform taskboard = tfBuffer.lookupTransform("base", "task_board" ,ros::Time(0)).transform; 
+                geometry_msgs::Transform taskboard = tfBuffer.lookupTransform("base", "task_board" ,ros::Time(0)).transform;
                 bool running = true;
                 int feature = 1;
                 //double step = 0.001;
@@ -300,9 +300,9 @@ int main(int argc, char* argv[])
                 struct termios cooked, raw;
                 tcgetattr(kfd, &cooked);
                 memcpy(&raw, &cooked, sizeof(struct termios));
-                
+
                 raw.c_lflag &=~ (ICANON | ECHO);
-                // Setting a new line, then end of file                         
+                // Setting a new line, then end of file
                 raw.c_cc[VEOL] = 1;
                 raw.c_cc[VEOF] = 2;
                 tcsetattr(kfd, TCSANOW, &raw);
@@ -312,7 +312,7 @@ int main(int argc, char* argv[])
 
                 while(ros::ok() && running){
                     Eigen::Matrix4d deltaP = Eigen::Matrix4d::Identity();
-                    
+
                     //char c = getc(stdin);
                     char c;
                     if(read(kfd, &c, 1) < 0)
@@ -345,7 +345,7 @@ int main(int argc, char* argv[])
                         break;
                     case 'q':
                         deltaP(2,3) += step;
-                        break;        
+                        break;
                     case 'j':
                         deltaP.block<3,3>(0,0) = Eigen::AngleAxisd(-step * M_PI, Eigen::Vector3d::UnitX()).matrix();
                         break;
@@ -400,7 +400,7 @@ int main(int argc, char* argv[])
                     //msg.feature = feature;
                     //msg.speeds = speeds;
                     //jog_control_pub.publish(msg);
-                    
+
                     //std::cout << "set Frame" << std::endl;
                     geometry_msgs::Transform null;
                     null.rotation.w = 0;
@@ -410,7 +410,7 @@ int main(int argc, char* argv[])
                     Eigen::Isometry3d robotPose_Iso;
                     tf::transformMsgToEigen(tcp_pose.transform, robotPose_Iso);
                     Eigen::Matrix4d robotPose_Mat = robotPose_Iso.matrix();
-                    Eigen::Matrix4d resPose; 
+                    Eigen::Matrix4d resPose;
                     if(feature == 0){
                         resPose = robotPose_Mat;
                         resPose(0,3) += deltaP(0, 3);
@@ -436,14 +436,14 @@ int main(int argc, char* argv[])
                         resPose(2,3) += deltaP(2, 3);
                         resPose.block<3,3>(0,0) = deltaP.block<3,3>(0,0) * resPose.block<3,3>(0,0);
                     }
-                    
+
                     tf::transformEigenToMsg(Eigen::Isometry3d(resPose), target_srv.request.cartesian_goal);
                     client_t.call(target_srv);
-                    
+
                     jog_menu(feature, step, stepIncrement);
                     //ros::Duration(0.05).sleep();
                 }
-                
+
                 //srv.request.IO = false;
                 //jog_client.call(srv);
                 force_srv.request.IO = false;
@@ -452,7 +452,7 @@ int main(int argc, char* argv[])
                 freedrive_srv.request.IO = true;
                 client_f.call(freedrive_srv);
                 break;
-            
+
             }
         case 5:
             {
@@ -555,7 +555,7 @@ int main(int argc, char* argv[])
 
                 last_position.clear();
                 last_position = current_position;
-                
+
                 try{
                 target_srv.request.cartesian_goal = tfBuffer.lookupTransform("base", tf ,ros::Time(0)).transform;
                 }
@@ -749,4 +749,3 @@ void jog_menu(int feature, double speed, double step)
     std::cout << "\rFrame: " << frames[feature] << std::endl;
     std::cout << "------------------------" << std::endl;
 }
-

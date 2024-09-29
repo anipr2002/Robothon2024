@@ -15,9 +15,9 @@ import tf2_ros
 from tf import transformations
 
 import sensor_msgs.msg
-from robothon2023.srv import AddTf2
-from robothon2023.srv import GetBoardLocation, GetBoardLocationResponse
-from geometry_msgs.msg import TransformStamped 
+from MSVC2024_Setup_2024.srv import AddTf2
+from MSVC2024_Setup_2024.srv import GetBoardLocation, GetBoardLocationResponse
+from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import Transform
 
 from scipy.spatial.transform import Rotation
@@ -36,9 +36,9 @@ def service_callback(req):
         M, angle, mat = BoardDetection()
 
         cam = transformStamped_to_numpy(tfBuffer.lookup_transform('base_adj', 'ids_cam', rospy.Time()))
-        cam[2,3] += 0.009 
+        cam[2,3] += 0.009
         print("cam: ", cam) # for debugging
-        
+
         tb  = cam @ mat
 
         tb_euler = Rotation.from_matrix(tb[:3,:3]).as_euler("zyx")
@@ -64,7 +64,7 @@ def service_callback(req):
         return GetBoardLocationResponse(True,config)
     else:
         return GetBoardLocationResponse(False,0)
-    
+
 
 def tcpPoseCallback(data):
     global pose
@@ -117,7 +117,7 @@ def SIFTBoardDetector(train_img, test_img, ref_pts, num_features=num_features*0.
     dy = pt2[1] - pt1[1]
     angle_rad = math.atan2(dy, dx)
     angle_deg = 360.00 - math.degrees(angle_rad)
-    
+
     # Display the result
     if show_output:
         ref_pts = ref_pts.astype(int).reshape(-1, 2)
@@ -144,16 +144,16 @@ def SIFTBoardDetector(train_img, test_img, ref_pts, num_features=num_features*0.
 
 
 def imageToRealBase(img_pts, image):
-    
-    realPositions = np.array([[0.224, 0.120,0.003],   # center of blue button                         
-                            [0.224, 0.105, 0.003],  # center of red button                            
-                            [0.2432, 0.1415,-0.002],  # far contralateral screw hole                      
-                            [0.2432, 0.011,-0.002],  # far ipsilateral screw hole                     
-                            [0.1275, 0.1415, -0.002],  # middle contralateral screwhole               
-                            [0.1275, 0.011,-0.002],   # middle ipsilateral screwhole                  
-                            [0.011, 0.1415,-0.002],  # close contralateral screwhole                  
-                            [0.011, 0.011,-0.002]]) # close ipsilateral screwhole                     
-    # red dimension x is first value, green dimension y is 2nd value, blue dimension z is 3rd value           
+
+    realPositions = np.array([[0.224, 0.120,0.003],   # center of blue button
+                            [0.224, 0.105, 0.003],  # center of red button
+                            [0.2432, 0.1415,-0.002],  # far contralateral screw hole
+                            [0.2432, 0.011,-0.002],  # far ipsilateral screw hole
+                            [0.1275, 0.1415, -0.002],  # middle contralateral screwhole
+                            [0.1275, 0.011,-0.002],   # middle ipsilateral screwhole
+                            [0.011, 0.1415,-0.002],  # close contralateral screwhole
+                            [0.011, 0.011,-0.002]]) # close ipsilateral screwhole
+    # red dimension x is first value, green dimension y is 2nd value, blue dimension z is 3rd value
     # Measured from the corner closest to the 3d-printed holder for the multimeter probe
     print("scaled image points for pnp ") # for debugging
     img_pts = np.array(scalePoints(img_pts[4:], (5536, 3692), (1362, 923), show_output=True), dtype=np.float32)
@@ -167,7 +167,7 @@ def imageToRealBase(img_pts, image):
     print("real_pts: ", real_pts) # for debugging
 
     # camera intrinsic parameters
-    Kmat = np.array([[6.59120557e+03, 0.00000000e+00, 2.72294039e+03],[ 0.00000000e+00, 6.59485693e+03, 1.83543881e+03], [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]]) 
+    Kmat = np.array([[6.59120557e+03, 0.00000000e+00, 2.72294039e+03],[ 0.00000000e+00, 6.59485693e+03, 1.83543881e+03], [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
     Dmat = np.array([0.0,0.0,0.0,0.0,0.0])
     # camera extrinsic parameters
     matCam =  np.array([[-9.99818480e-01, -1.87744792e-02, -3.24429211e-03, -2.85266318e-04],[-1.87919161e-02,  9.99808669e-01,  5.43045494e-03, -5.86241360e-01],[ 3.14171741e-03,  5.49043567e-03, -9.99979992e-01,  9.09037476e-01],[ 0.00000000e+00,  0.00000000e+00 , 0.00000000e+00 , 1.00000000e+00]])
@@ -215,8 +215,8 @@ def BoardDetection(ros_deploy=True, detect=True):
     all_pts = np.vstack((taskboard_bb.reshape(-1, 2), img_pts))
     train_pts = all_pts
     print("all_pts: ", all_pts) # for debugging
-    
-    train_img= cv2.imread('/home/robothon/Robothon/src/robothon2023/src/idsImageresized.png', cv2.IMREAD_GRAYSCALE)
+
+    train_img= cv2.imread('/home/robothon/Robothon/src/MSVC2024_Setup_2024/src/idsImageresized.png', cv2.IMREAD_GRAYSCALE)
 
     if ros_deploy:
         try:
@@ -250,7 +250,7 @@ def BoardDetection(ros_deploy=True, detect=True):
         print("points: ", points) # for debugging
         #return imageToRealBase(points, test_img)
         return None, None
-       
+
 
 if __name__ == "__main__":
 

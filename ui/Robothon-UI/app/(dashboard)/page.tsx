@@ -1,3 +1,11 @@
+/**
+ * @file page.tsx
+ * @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)\
+ * @brief Main page component
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 import React from "react";
 
 const Page = () => {

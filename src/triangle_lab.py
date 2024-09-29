@@ -1,6 +1,6 @@
 '''
     @file triangle_lab.py
-    @authors Adrian Müller (adrian.mueller@study.thws.de), 
+    @authors Adrian Müller (adrian.mueller@study.thws.de),
             Maximilian Hornauer (maximilian.hornauer@study.thws.de),
             Usama Ali (usama.ali@study.thws.de)
     @brief Program to detect triangles on a M5 screen
@@ -24,9 +24,9 @@ from cv2 import WND_PROP_FULLSCREEN
 from cv2 import WINDOW_FULLSCREEN
 
 import sensor_msgs.msg
-from robothon2023.srv import GetTriangles, GetTrianglesResponse
+from MSVC2024_Setup_2024.srv import GetTriangles, GetTrianglesResponse
 
-from robothon2023.srv import GetFinished, GetFinishedResponse 
+from MSVC2024_Setup_2024.srv import GetFinished, GetFinishedResponse
 
 def realsenseImgCallback(data):
     global realBuf
@@ -41,12 +41,12 @@ def service_callback(req):
     delta = 0
     status = -1
     #TODO: After the yellow triangle hits the target position -> screen flashes -> no triangles detected -> service thinks it is finished
-    #Dirty fix: Wait before taking picture -> screen-flash is over  
+    #Dirty fix: Wait before taking picture -> screen-flash is over
     rospy.sleep(1)
     screenMask, width, x, y = detectM5()
 
     manual_region = [85, 10, 27, 22]
-    
+
     if(screenMask is not None):
         # Generate a manual mask region to add zeros in the bounding rectangle area
         manual_mask = np.ones_like(screenMask)
@@ -67,8 +67,8 @@ def service_callback(req):
             if(done):
                 return GetTrianglesResponse(0,2)
 
-        
-        if(positions[0] is None): 
+
+        if(positions[0] is None):
             status = -1
         else:
             if(positions[2] is None): #no green Triangle: Delta between red and yellow
@@ -93,7 +93,7 @@ def service_callback_finished(req): #/*
     screenMask, width, x, y = detectM5()
     #cv2.imshow("image", screenMask)
     #cv2.waitKey(0)
-    
+
     if screenMask is not None:
         print("image ok")
         if(checkDone(screenMask)>6000):
@@ -141,15 +141,15 @@ def detectM5():
         img = meanImg.copy()
         if(displayMaskCnt is None):
             return None, 0
-        
+
         # cv2.drawContours(img, [displayMaskCnt], -1, (255,255,255), 3)
         # cv2.imshow("real", img)
         # cv2.waitKey(10)
-        
+
         screenMask = np.zeros_like(m5Mask)
         cv2.drawContours(screenMask, [displayMaskCnt], -1, (255), -1)
         x, y, w, h = cv2.boundingRect(displayMaskCnt)
-        
+
         screenLab = cv2.bitwise_and(labimg, labimg, mask=screenMask)
 
         return screenLab, w, x, y
@@ -177,28 +177,28 @@ def getTrianglePos(triangleMask, yLimit):
         cntX = int(moments["m10"] / moments["m00"])
         cntY = int(moments["m01"] / moments["m00"])
         filteredPos.append((cntX, cntY, cv2.contourArea))
-        
+
     if(len(filteredPos) > 1):
         #print("Too many contours! Found: " + str(len(filteredPos)))
         maxAreaPos = filteredPos[np.argmax(list(map(lambda t : t[2], filteredPos)))]
         return maxAreaPos[:2]
     if(len(filteredPos) == 0): #no green triangle
         return None
-    
+
     #return center of triangle
     return filteredPos[0][:2]
 
 
 def detectTriangles(labimg):
     global realBuf
-    
+
     meanImg = np.mean(realBuf, axis=0).astype(np.uint8)
     # cv2.imshow("meanImg", meanImg)
     trianglePoints = []
     #Cut out our mask
     drawImg = meanImg.copy()
 
-    
+
     #threshold red
     # lowerred = np.array([`12, 172, 129])       # werte Samstag nacht
     lowerred = np.array([12, 172, 12])         # werte Sonntag früh
@@ -247,11 +247,11 @@ def detectTriangles(labimg):
     yellowPos = getTrianglePos(yellowMask,redPos[1])
     trianglePoints.append(yellowPos)
     cv2.circle(drawImg, yellowPos, 10, (0,255,255), -1)
-    
+
     greenPos = getTrianglePos(greenMask,redPos[1])
     trianglePoints.append(greenPos)
     cv2.circle(drawImg, greenPos, 10, (0,255,0), -1)
-    
+
     # print(trianglePoints)
     # cv2.imshow("Drawn Img", cv2.resize(drawImg,(720,480)))
     # cv2.waitKey(10)
@@ -260,7 +260,7 @@ def detectTriangles(labimg):
 
 
 def adjust_saturation_and_brightness(frame, saturation_scale=1.5, brightness_offset=-50):
- 
+
     # Convert the frame from BGR to HSV color space
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
@@ -269,13 +269,13 @@ def adjust_saturation_and_brightness(frame, saturation_scale=1.5, brightness_off
 
     # Adjust the saturation (S channel)
     hsv[:, :, 1] *= saturation_scale
-    
+
     # Ensure the saturation values are within the valid range [0, 255]
     hsv[:, :, 1] = np.clip(hsv[:, :, 1], 0, 255)
 
     # Adjust the brightness (V channel)
     hsv[:, :, 2] += brightness_offset
-    
+
     # Ensure the brightness values are within the valid range [0, 255]
     hsv[:, :, 2] = np.clip(hsv[:, :, 2], 0, 255)
 
@@ -297,7 +297,7 @@ def checkDone(labimg):
     upperblack = np.array([78, 166, 160])       # werte 05.05 mit lack screen detection
 
     blackMask = cv2.inRange(labimg, lowerblack, upperblack)
-    
+
     # cv2.imshow("Black", blackMask)
     # cv2.waitKey(10)
     # print(cv2.countNonZero(blackMask))
@@ -320,7 +320,7 @@ if __name__ == "__main__":
                 bufferFull = False
         if(bufferFull):
             break
-        
+
     s = rospy.Service('/triangle_detection', GetTriangles, service_callback)
     a = rospy.Service('/finished_detection', GetFinished, service_callback_finished) #/*
 

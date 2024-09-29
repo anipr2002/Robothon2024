@@ -1,12 +1,14 @@
 /**
- * @file byod_tasks.hpp
- * @authors Medhansh Rath (medhansh.rath@study.thws.de)
- * @brief Header to byod_tasks.cpp
+ * @file task_board_tasks.hpp
+ * @authors Adrian Müller (adrian.mueller@study.thws.de),
+ *          Maximilian Hornauer (maximilian.hornauer@study.thws.de),
+ *          Usama Ali (usama.ali@study.thws.de)
+ * @brief Header to task_board_tasks.cpp
  * @version 0.1
- * @date 2024-09-21
- * 
- * @copyright Copyright (c) 2024
- * 
+ * @date 2023-04-14
+ *
+ * @copyright Copyright (c) 2023
+ *
  */
 
 #pragma once
@@ -32,9 +34,9 @@
 #include <ur_ros_driver/GripperInfo.h>
 #include <ur_ros_driver/Log.h>
 #include <ur_ros_driver/GetTimeStamp.h>
-#include <robothon2023/GetTriangles.h>
-#include <robothon2023/GetBoardLocation.h>
-#include <robothon2023/GetFinished.h>
+#include <MSVC2024_Setup_2024/GetTriangles.h>
+#include <MSVC2024_Setup_2024/GetBoardLocation.h>
+#include <MSVC2024_Setup_2024/GetFinished.h>
 
 #include <eigen_conversions/eigen_msg.h>
 
@@ -46,11 +48,11 @@
 typedef boost::array<double, 6> array6d;
 typedef boost::array<long int, 6> array6i;
 
-class byod_tasks
+class task_board_tasks
 {
 private:
     ur_ros_driver::SetTrajectory trajectory;
-    
+
     //ROS clients for service calls
 
     ros::ServiceClient cart_move_;
@@ -93,7 +95,7 @@ private:
     ur_ros_driver::SetCartTarget cart_target(std::string target, int mode = 2, double vel = 1, double acc = 1);
     ur_ros_driver::SetContactTarget contact_target(array6d speed = {0,0,-0.1,0,0,0}, double acc = 0.5);
     ur_ros_driver::SetJointTarget joint_target(array6d target, double vel = 0.5, double acc = 0.5);
-    
+
     ur_ros_driver::SetForceTarget force_target(bool IO, array6d free_axis = {0,0,1,0,0,0},array6d wrench = {0,0,-10.0,0,0,0}, double vel=3);
     ur_ros_driver::SetGripper gripper_open(double position = 100, double speed = 100, double force = 10);
     ur_ros_driver::SetGripper gripper_close(double position = 0, double speed = 100, double force = 100);
@@ -106,10 +108,10 @@ private:
     bool call_joint_target(ur_ros_driver::SetJointTarget& srv);
     bool call_contact_target(ur_ros_driver::SetContactTarget& srv);
     bool call_gripper(ur_ros_driver::SetGripper& srv);
-    bool call_triangles(robothon2023::GetTriangles& srv);
+    bool call_triangles(MSVC2024_Setup_2024::GetTriangles& srv);
     bool call_jog_start(bool IO);
     bool call_finish_detection();
-    
+
 
 
     //bool service_call(ros::ServiceClient &client, auto &srv);
@@ -118,21 +120,25 @@ public:
 
     tf2_ros::Buffer *tfBuffer_;
     tf2_ros::TransformListener *tfListener_;
-    
-    int config = 2 ;
-    
-    byod_tasks(ros::NodeHandle& n);
-    ~byod_tasks();
-    
-    bool call_trajectory();
-    bool call_board_detection();
-    bool call_touch_detection();
-    bool call_log(bool IO, std::string filename);
-    double call_robot_time();
 
+    int config = 2 ;
+
+    task_board_tasks(ros::NodeHandle& n);
+    ~task_board_tasks();
+
+    bool speed_test();
+    bool call_trajectory();
     void gripper_info_callback(ur_ros_driver::GripperInfo msg);
     void tcp_positon_callback(geometry_msgs::TransformStamped msg);
     void wrench_callback(geometry_msgs::WrenchStamped msg);
+    bool call_touch_detection();
+
+    bool call_log(bool IO, std::string filename);
+    double call_robot_time();
+
+
+    // Taskboard tasks
+    bool call_board_detection();
 
     bool press_button(std::string color);
 
@@ -154,11 +160,24 @@ public:
     bool press_button_hook();
 
     bool check_finish();
-    bool speed_test();
 
     bool home(bool fast = false);
     bool spiral_force(double start, double stop, int step_c , double step_f, double z_limit,bool dir = true);
     double pose_distance(geometry_msgs::Transform target);
     bool function_test();
     bool calculate_config();
+
+
+    //BYOD tasks
+    bool charging_cable_insert(std::string cable_type);
+    bool unscrew();
+    bool suction();
+    bool sphonegrab();
+    bool hairdryer();
+
+    bool switch_on();
+    bool switch_off();
+    bool backcover();
+    bool sort2();
+    bool prying();
 };
