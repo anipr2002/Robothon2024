@@ -2,12 +2,16 @@
 <package format="2">
   <name>MSVC2024_Setup_2024</name>
   <version>1.0.0</version>
-  <description>The MSVC2024_Setup_2024 package contains the code for team RoboPigs solution to the Robothon 2023 competition</description>
+  <description>The MSVC2024_Setup_2024 package contains the code for team RoboPigs solution to the Robothon 2024 competition</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <maintainer email="adrian.mueller@study.thws.de">Adrian Mueller</maintainer>
-  <maintainer email="maximilan.hornauer@study.thws.de">Maximilian Hornauer</maintainer>
   <maintainer email="usama.ali@study.thws.de">Usama Ali</maintainer>
+  <maintaier email="anirudh.panchangamranganath@study.thws.de">Anirudh Panchangam Ranganath</maintainer>
+  <maintainer email="medhansh.rath@study.thws.de">Medhansh Rath</maintainer>
+  <maintainer email="shubham.joshi@study.thws.de">Shubham Joshi</maintainer>
+
+
 
 
 
