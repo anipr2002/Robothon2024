@@ -2,12 +2,22 @@
 # Team: RoboPig
 
 ## General Information of Setup
-### Hardware Requirements:
+### Hardware Requirements
+#### Robot Setup:
 - UR10e (Polyscope 5.11)
 - Robotiq HandE without Rubber Tips
-- 3D Printed Hook
 - IDS U3-CP3800 Rev2.2 Camera (for detection of taskboard and certain components in BYOD)
 - Intel Realsense D435i Camera with 3D Printed mount facing -y of TCP (for Slider Task)
+#### Additional Requirements for Taskboard Operation
+- 3D Printed Hook
+#### Additional Requirements for BYOD Operation
+- 3D Printed Mounts (tiles, tile fixtures, smartphone rack, hot-air blower holder with vents, suction pad holders, workstation, sorting boxes, 5 foam pads)
+  !!Note:!! Environment friendly biodegradable PLA (3DJake ecoPLA) filament is used for 3D printing the mounts
+- 2 Suction Pads: for moving and fixing a smartphone
+- Prying Tool: to remove backcover if necessary
+- Hot-air Blower: to heat up the back side of a smarthpone to melt the resin and ease the removal of backcover
+  !!Note:!! An e-waste fully-functioning hair dryer is been reused here as an hot-air blower
+- (Multimeter: as a future scope for taking certain measurements on the back-panel of a smartphone if the backcover is removed successfully)
 
 Optional:
 - Googly Eyes
@@ -58,9 +68,6 @@ To run the task scheduler:
 `rosrun MSVC2024_Setup_2024 MSVC2024_Setup_2024_taskboard`
 - !!WARNING!! robot will move immediately to home position
 
-To run the UI Dashboard:
-- [Follow the guide here](ui/Robothon-UI/README.md)
-
 To run the point recording script:
 `rosrun MSVC2024_Setup_2024 MSVC2024_Setup_2024_point_recording`
 
@@ -78,6 +85,8 @@ To run touch detect service:
     - Move robot away
     - Confirm position in rviz
 
+### Starting the UI Dashboard:
+- [Follow the guide here](ui/Robothon-UI/README.md)
 
 ## Robot Trajectory Logging
 1. Uncomment 2x call_log() in task_board_scheduler.cpp
