@@ -59,7 +59,7 @@ To run the task scheduler:
 - !!WARNING!! robot will move immediately to home position
 
 To run the UI Dashboard:
--
+- [Follow the guide here](ui/Robothon-UI/README.md)
 
 To run the point recording script:
 `rosrun MSVC2024_Setup_2024 MSVC2024_Setup_2024_point_recording`
@@ -68,7 +68,7 @@ To call the taskboard camera detection service:
     - Run `rqt`
     - Select sift_board_detection service and call it
 
-To run touch detect:
+To run touch detect service:
 `rosrun MSVC2024_Setup_2024 MSVC2024_Setup_2024_taskboard`
     - !!Attention!! robot is immediately aligning to z
     - Touch so that +y of tcp looks away from taskboard.
