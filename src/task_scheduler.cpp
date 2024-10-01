@@ -5,9 +5,8 @@
                 Medhansh Rath(medhansh.rath@study.thws.de)
 //  * @brief Program to schedule tasks
 //  * @version 0.1
-//  * @date 2023-04-11
 //  *
-//  * @copyright Copyright (c) 2023
+//  * @copyright Copyright (c) 2024
 //  *
 //  */
 
@@ -17,11 +16,11 @@
 #include <sstream>
 #include <string>
 #include <chrono>
-#include <MSVC2024_Setup_2024/task_board_tasks.hpp>
+#include <msvc2024_setup/tasks.hpp>
 
 #include <ur_ros_driver/ros_color_stream.hpp>
 
-#include "/home/robothon/Robothon/src/MSVC2024_Setup_2024/include/MSVC2024_Setup_2024/httplib.h"
+#include "/home/robothon/Robothon/src/msvc2024_setup/include/msvc2024_setup/httplib.h"
 #include <nlohmann/json.hpp>
 #include <vector>
 #include <algorithm>
@@ -137,7 +136,7 @@ void runScheduler() {
     int ctn = 0;
 
     ros::NodeHandle n("~");
-    task_board_tasks task = task_board_tasks(n);
+    tasks task = tasks(n);
 
     // if (!checkSequence(sequenz)) {
     //     ROS_ERROR("SEQUENCE INVALID!");
@@ -238,8 +237,8 @@ void runScheduler() {
             case phone_charging:
                 ROS_MAGENTA_STREAM("Task: phone charging");
                 task.call_robot_time();
-                task.charging_cable_insert("lightning");
-                task.charging_cable_insert("usbc");
+                task.charging_cable_insert(1);
+                task.charging_cable_insert(2);
                 counter++;
                 break;
 

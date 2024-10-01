@@ -1,4 +1,4 @@
-# MSVC2024_Setup_2024
+# msvc2024_setup
 # Team: RoboPig
 
 ## General Information of Setup
@@ -82,22 +82,22 @@ eigen.tuxfamily.org
 ```
 
 ## Starting the System
-Run Launcher: `roslaunch MSVC2024_Setup_2024 taskboard_core.launch`
+Run Launcher: `roslaunch msvc2024_setup taskboard_core.launch`
     - Note: Make sure that the robot IP in the launchfile is correct
 
 To run the task scheduler:
-`rosrun MSVC2024_Setup_2024 MSVC2024_Setup_2024_taskboard`
+`rosrun msvc2024_setup msvc2024_setup_taskboard`
 - !!WARNING!! robot will move immediately to home position
 
 To run the point recording script:
-`rosrun MSVC2024_Setup_2024 MSVC2024_Setup_2024_point_recording`
+`rosrun msvc2024_setup msvc2024_setup_point_recording`
 
 To call the taskboard camera detection service:
     - Run `rqt`
     - Select sift_board_detection service and call it
 
 To run touch detect service:
-`rosrun MSVC2024_Setup_2024 MSVC2024_Setup_2024_taskboard`
+`rosrun msvc2024_setup msvc2024_setup_taskboard`
     - !!Attention!! robot is immediately aligning to z
     - Touch so that +y of tcp looks away from taskboard.
     - Touch longside without cable holder
@@ -107,9 +107,9 @@ To run touch detect service:
     - Confirm position in rviz
 
 ### Starting the UI Dashboard:
-- [Follow the guide here](ui/Robothon-UI/README.md)
+- [Follow the guide here](ui/README.md)
 
 ## Robot Trajectory Logging
 1. Uncomment 2x call_log() in task_board_scheduler.cpp
-2. Change path in task_board_tasks.cpp
+2. Change path in tasks.cpp
 After each run change filename in first call_log() in task_board_scheduler.cpp

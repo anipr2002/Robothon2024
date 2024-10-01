@@ -1,7 +1,8 @@
 '''
     @file triangle_lab.py
     @authors Shubham Joshi (shubham.joshi@study.thws.de),
-             Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)
+             Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de),
+             Medhansh Rath(medhansh.rath@study.thws.de)
     @brief Program to detect ports
     @version 0.1
 
@@ -24,8 +25,8 @@ import ros_numpy
 import tf2_ros
 from tf import transformations
 import sensor_msgs.msg
-from MSVC2024_Setup_2024.srv import AddTf2
-#from MSVC2024_Setup_2024.srv import GetBoardLocation, GetBoardLocationResponse
+from msvc2024_setup.srv import AddTf2
+#from msvc2024_setup.srv import GetBoardLocation, GetBoardLocationResponse
 from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import Transform
 from scipy.spatial.transform import Rotation
@@ -64,7 +65,7 @@ def service_callback(req):
 
 
 def portDetector(image, x_min=0, y_min=0):
-    model = YOLO('latest_port_det_model.pt')
+    model = YOLO('../config/latest_port_det_model.pt')
     results = model(image, save=True)
 
     ports = []
@@ -208,29 +209,6 @@ def PortDetection(ros_deploy=True, detect=True):
             return []
     else:
         return None
-
-
-if __name__ == "__main__":
-
-    rospy.init_node('sift_board_detection')
-    idsBuf = None
-    zedBuf = None
-    rospy.Subscriber("/ids/rgb", sensor_msgs.msg.Image, idsImgCallBack)
-    rospy.Subscriber("/zed2/zed_node/rgb_raw/image_raw_color", sensor_msgs.msg.Image, zedImgCallBack)
-    s = rospy.Service("/sift_board_detection", GetBoardLocation, service_callback)
-    bridge = cv_bridge.CvBridge()
-    #br = tf2_ros.static_transform_broadcaster.StaticTransformBroadcaster()
-    tfBuffer = tf2_ros.Buffer()
-    listener = tf2_ros.TransformListener(tfBuffer)
-    rate = rospy.Rate(20)
-
-    detection = False
-    if(detection == False):
-        rospy.spin() #spin infinitely and wait for callbacks
-
-
-    #print(TaskboardTransformMatrix) # for debugging
-
 
 if __name__ == "__main__":
     rospy.init_node('port_detection_service')

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(MSVC2024_Setup_2024)
+project(msvc2024_setup)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++17)
@@ -87,7 +87,7 @@ catkin_install_python(PROGRAMS
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/MSVC2024_Setup_2024.cpp
+#   src/${PROJECT_NAME}/msvc2024_setup.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -98,7 +98,7 @@ catkin_install_python(PROGRAMS
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/MSVC2024_Setup_2024_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/msvc2024_setup_node.cpp)
 
 add_executable(${PROJECT_NAME}_point_recording src/point_recording.cpp)
 add_executable(${PROJECT_NAME}_point_recording_new src/point_recording_new.cpp)
@@ -106,7 +106,7 @@ add_executable(${PROJECT_NAME}_touch_detect src/touchDetection.cpp)
 add_executable(${PROJECT_NAME}_touch_detect_service src/touchDetection_service.cpp)
 add_executable(${PROJECT_NAME}_tf2_publisher src/tf2_publisher.cpp)
 
-add_executable(${PROJECT_NAME}_taskboard src/task_board_tasks.cpp src/task_board_scheduler.cpp)
+add_executable(${PROJECT_NAME}_taskboard src/tasks.cpp src/task_board_scheduler.cpp)
 
 add_executable(${PROJECT_NAME}_ids_node src/ids_camera.cpp)
 
@@ -119,8 +119,8 @@ target_link_libraries(${PROJECT_NAME}_taskboard ${catkin_LIBRARIES} ${Eigen_LIBR
 
 target_link_libraries(${PROJECT_NAME}_ids_node ids_peak ids_peak_ipl ${OpenCV_LIBS} ${CMAKE_THREAD_LIBS_INIT} ${catkin_LIBRARIES} )
 
-add_dependencies(${PROJECT_NAME}_point_recording MSVC2024_Setup_2024_generate_messages_cpp)
-add_dependencies(${PROJECT_NAME}_point_recording_new MSVC2024_Setup_2024_generate_messages_cpp)
-add_dependencies(${PROJECT_NAME}_touch_detect MSVC2024_Setup_2024_generate_messages_cpp)
-add_dependencies(${PROJECT_NAME}_tf2_publisher MSVC2024_Setup_2024_generate_messages_cpp)
-add_dependencies(${PROJECT_NAME}_taskboard MSVC2024_Setup_2024_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME}_point_recording msvc2024_setup_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME}_point_recording_new msvc2024_setup_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME}_touch_detect msvc2024_setup_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME}_tf2_publisher msvc2024_setup_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME}_taskboard msvc2024_setup_generate_messages_cpp)

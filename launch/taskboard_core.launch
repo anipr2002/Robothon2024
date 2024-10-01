@@ -26,14 +26,14 @@
     <arg name="enable_depth"   value="true"/>
   </include>
 
-  <node name="triangle_detection" pkg="MSVC2024_Setup_2024" type="triangle_lab.py" output="screen"/>
+  <node name="triangle_detection" pkg="msvc2024_setup" type="triangle_lab.py" output="screen"/>
 
-  <node name="ids_node" pkg="MSVC2024_Setup_2024" type="MSVC2024_Setup_2024_ids_node" />
+  <node name="ids_node" pkg="msvc2024_setup" type="msvc2024_setup_ids_node" />
 
-  <node name="board_detection" pkg="MSVC2024_Setup_2024" type="board_detection.py" output="screen"/>
-  <node name="sift_board_detection" pkg="MSVC2024_Setup_2024" type="sift_board_detection.py" output="screen"/>
-  <!-- <node name="screen_detection" pkg="MSVC2024_Setup_2024" type="screen_detection.py" output="screen"/> -->
-  <node name="touch_detection" pkg="MSVC2024_Setup_2024" type="MSVC2024_Setup_2024_touch_detect_service" output="screen"/>
+  <node name="board_detection" pkg="msvc2024_setup" type="board_detection.py" output="screen"/>
+  <node name="sift_board_detection" pkg="msvc2024_setup" type="sift_board_detection.py" output="screen"/>
+  <!-- <node name="screen_detection" pkg="msvc2024_setup" type="screen_detection.py" output="screen"/> -->
+  <node name="touch_detection" pkg="msvc2024_setup" type="msvc2024_setup_touch_detect_service" output="screen"/>
 
 
   <!-- Start ROS bridge stuff -->
@@ -46,7 +46,7 @@
 
 
  <!--
-  <node name="board_detection" pkg="MSVC2024_Setup_2024" type="board_detection_zed.py" output="screen"/>
+  <node name="board_detection" pkg="msvc2024_setup" type="board_detection_zed.py" output="screen"/>
   <include file= "$(find zed_wrapper)/launch/zed2.launch">
 -->
 
@@ -54,9 +54,9 @@
 
   <node pkg="tf2_ros" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0.148 0 0 0 1 wrist_3_link tcp" />
 
-  <node name="tf2_publisher" pkg="MSVC2024_Setup_2024" type="MSVC2024_Setup_2024_tf2_publisher" output="screen" launch-prefix="bash -c 'sleep 5; $0 $@' " />
+  <node name="tf2_publisher" pkg="msvc2024_setup" type="msvc2024_setup_tf2_publisher" output="screen" launch-prefix="bash -c 'sleep 5; $0 $@' " />
 
-  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find MSVC2024_Setup_2024)/config/rviz_config.rviz" />
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find msvc2024_setup)/config/rviz_config.rviz" />
 
 
 </launch>

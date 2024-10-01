@@ -4,9 +4,8 @@
     @authors Shubham Joshi (shubham.joshi@study.thws.de)
     @brief Program to detect the taskboard
     @version 0.1
-    @date 2023-03-29
 
-    @copyright Copyright (c) 2023
+    @copyright Copyright (c) 2024
 '''
 import cv2
 import numpy as np
@@ -25,8 +24,8 @@ import tf2_ros
 from tf import transformations
 
 import sensor_msgs.msg
-from MSVC2024_Setup_2024.srv import AddTf2
-from MSVC2024_Setup_2024.srv import GetBoardLocation, GetBoardLocationResponse
+from msvc2024_setup.srv import AddTf2
+from msvc2024_setup.srv import GetBoardLocation, GetBoardLocationResponse
 from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import Transform
 
@@ -226,7 +225,7 @@ def BoardDetection(ros_deploy=True, detect=True):
     train_pts = all_pts
     print("all_pts: ", all_pts) # for debugging
 
-    train_img= cv2.imread('/home/robothon/Robothon/src/MSVC2024_Setup_2024/src/idsImageresized.png', cv2.IMREAD_GRAYSCALE)
+    train_img= cv2.imread('/home/robothon/Robothon/src/msvc2024_setup/src/idsImageresized.png', cv2.IMREAD_GRAYSCALE)
 
     if ros_deploy:
         try:

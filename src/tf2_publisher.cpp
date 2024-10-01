@@ -16,14 +16,14 @@
 #include <ros/package.h>
 
 #include <fstream>
-#include <MSVC2024_Setup_2024/eigen_json.hpp>
+#include <msvc2024_setup/eigen_json.hpp>
 
 #include <geometry_msgs/Pose.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/static_transform_broadcaster.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <eigen_conversions/eigen_msg.h>
-#include <MSVC2024_Setup_2024/AddTf2.h>
+#include <msvc2024_setup/AddTf2.h>
 
 #include <visualization_msgs/Marker.h>
 
@@ -40,8 +40,8 @@ private:
     std::string filename;
     std::map<std::string, geometry_msgs::TransformStamped> transforms;
     tf2_ros::StaticTransformBroadcaster* br;
-    bool add_tf(MSVC2024_Setup_2024::AddTf2::Request& req,
-                MSVC2024_Setup_2024::AddTf2::Response& res);
+    bool add_tf(msvc2024_setup::AddTf2::Request& req,
+                msvc2024_setup::AddTf2::Response& res);
     void writeJson();
     void readJson();
     void publishTf();
@@ -96,7 +96,7 @@ void tf2_publisher::visual_taskboard()
     marker.color.g = 0.0;
     marker.color.b = 0.0;
     //only if using a MESH_RESOURCE marker type:
-    marker.mesh_resource = "package://MSVC2024_Setup_2024/config/Taskboard.dae";
+    marker.mesh_resource = "package://msvc2024_setup/config/Taskboard.dae";
     marker.mesh_use_embedded_materials = true;
     vis_pub_.publish(marker);
 }
@@ -109,7 +109,7 @@ void tf2_publisher::publishTf() {
 }
 
 void tf2_publisher::readJson() {
-    std::string path = ros::package::getPath("MSVC2024_Setup_2024");
+    std::string path = ros::package::getPath("msvc2024_setup");
 
     std::ifstream f(path+"/config/"+this->filename);
     json j = json::parse(f);
@@ -141,7 +141,7 @@ void tf2_publisher::writeJson()
         j[i.first]["transform"] = iso.matrix();
     }
 
-    std::string path = ros::package::getPath("MSVC2024_Setup_2024");
+    std::string path = ros::package::getPath("msvc2024_setup");
     std::ofstream file(path+"/config/"+this->filename);
     file << std::setw(4) << j;
 }
@@ -153,8 +153,8 @@ void tf2_publisher::writeJson()
  * @return true
  * @return false
  */
-bool tf2_publisher::add_tf(MSVC2024_Setup_2024::AddTf2::Request& req,
-                            MSVC2024_Setup_2024::AddTf2::Response& res)
+bool tf2_publisher::add_tf(msvc2024_setup::AddTf2::Request& req,
+                            msvc2024_setup::AddTf2::Response& res)
 {
     ROS_INFO_STREAM(" >> Tf2_punlisher Callback called with " << req);
     geometry_msgs::TransformStamped temp = req.pose;

@@ -14,7 +14,7 @@
 #include <ros/ros.h>
 
 #include <fstream>
-#include <MSVC2024_Setup_2024/eigen_json.hpp>
+#include <msvc2024_setup/eigen_json.hpp>
 
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/TransformStamped.h>
@@ -40,8 +40,8 @@
 #include <ur_ros_driver/SetFreedrive.h>
 #include <ur_ros_driver/SetCartTarget.h>
 #include <ur_ros_driver/SetGripper.h>
-#include <MSVC2024_Setup_2024/AddTf2.h>
-#include <MSVC2024_Setup_2024/GetBoardLocation.h>
+#include <msvc2024_setup/AddTf2.h>
+#include <msvc2024_setup/GetBoardLocation.h>
 
 
 using json = nlohmann::json;
@@ -80,9 +80,9 @@ int main(int argc, char* argv[])
     ros::NodeHandle n;
     ros::ServiceClient client_f = n.serviceClient<ur_ros_driver::SetFreedrive>("/ur_hardware_interface/set_freedive");
     ros::ServiceClient client_move = n.serviceClient<ur_ros_driver::SetCartTarget>("/ur_hardware_interface/set_cart_target");
-    ros::ServiceClient client_store_tf = n.serviceClient<MSVC2024_Setup_2024::AddTf2>("/store_tf");
+    ros::ServiceClient client_store_tf = n.serviceClient<msvc2024_setup::AddTf2>("/store_tf");
     ros::ServiceClient gripper_move = n.serviceClient<ur_ros_driver::SetGripper>("/ur_hardware_interface/robotiq/set_gripper");
-    ros::ServiceClient taskboard_detection_ = n.serviceClient<MSVC2024_Setup_2024::GetBoardLocation>("/board_detection");
+    ros::ServiceClient taskboard_detection_ = n.serviceClient<msvc2024_setup::GetBoardLocation>("/board_detection");
 
     tf2_ros::Buffer tfBuffer;
     tf2_ros::TransformListener tfListener(tfBuffer);
@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
     /*
     std::cout << "Detection with Cam" << std::endl;
 
-    MSVC2024_Setup_2024::GetBoardLocation srv;
+    msvc2024_setup::GetBoardLocation srv;
     if(!taskboard_detection_.call(srv))
     {
         ROS_INFO("Detection went wrong");
@@ -205,7 +205,7 @@ int main(int argc, char* argv[])
 
 
     // Send TF to our server
-    MSVC2024_Setup_2024::AddTf2 addTF_srv;
+    msvc2024_setup::AddTf2 addTF_srv;
     tf::transformEigenToMsg(Eigen::Isometry3d(resultPose), addTF_srv.request.pose.transform);
     addTF_srv.request.pose.header.stamp = ros::Time::now();
     addTF_srv.request.pose.header.frame_id = parent_frame;

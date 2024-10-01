@@ -28,8 +28,8 @@ import tf2_ros
 from tf import transformations
 
 import sensor_msgs.msg
-from MSVC2024_Setup_2024.srv import AddTf2
-from MSVC2024_Setup_2024.srv import GetBoardLocation, GetBoardLocationResponse
+from msvc2024_setup.srv import AddTf2
+from msvc2024_setup.srv import GetBoardLocation, GetBoardLocationResponse
 from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import Transform
 

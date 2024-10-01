@@ -31,7 +31,7 @@
 
 #include <ur_ros_driver/SetFreedrive.h>
 #include <ur_ros_driver/SetCartTarget.h>
-#include <MSVC2024_Setup_2024/AddTf2.h>
+#include <msvc2024_setup/AddTf2.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <ur_ros_driver/StartJog.h>
 #include <ur_ros_driver/JogControl.h>
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
     ros::ServiceClient client_f = n.serviceClient<ur_ros_driver::SetFreedrive>("/ur_hardware_interface/set_freedive");
     ros::ServiceClient client_fm = n.serviceClient<ur_ros_driver::SetForceTarget>("/ur_hardware_interface/set_force_mode");
     ros::ServiceClient client_t = n.serviceClient<ur_ros_driver::SetCartTarget>("/ur_hardware_interface/set_cart_target");
-    ros::ServiceClient client_tf = n.serviceClient<MSVC2024_Setup_2024::AddTf2>("/store_tf");
+    ros::ServiceClient client_tf = n.serviceClient<msvc2024_setup::AddTf2>("/store_tf");
     ros::ServiceClient jog_client = n.serviceClient<ur_ros_driver::StartJog>("/ur_hardware_interface/start_jog");
 
     ros::Subscriber sub = n.subscribe("/ur_hardware_interface/tcp_pose", 1000, tcpCallback);
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
     ros::AsyncSpinner spinner(2);
     spinner.start();
 
-    MSVC2024_Setup_2024::AddTf2 addTF_srv;
+    msvc2024_setup::AddTf2 addTF_srv;
     ur_ros_driver::SetFreedrive freedrive_srv;
     freedrive_srv.request.IO = true;
     freedrive_srv.request.free_axes = free_axes;

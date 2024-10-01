@@ -24,9 +24,9 @@ from cv2 import WND_PROP_FULLSCREEN
 from cv2 import WINDOW_FULLSCREEN
 
 import sensor_msgs.msg
-from MSVC2024_Setup_2024.srv import GetTriangles, GetTrianglesResponse
+from msvc2024_setup.srv import GetTriangles, GetTrianglesResponse
 
-from MSVC2024_Setup_2024.srv import GetFinished, GetFinishedResponse
+from msvc2024_setup.srv import GetFinished, GetFinishedResponse
 
 def realsenseImgCallback(data):
     global realBuf

@@ -2,12 +2,11 @@
 #!/usr/bin/env python
 '''
     @file board_detection.py
-    @authors Anirudh Panchangam Ranganath(anirudh.panchangamranganath@study.thws.de)
+    @authors Anirudh Panchangam Ranganath (anirudh.panchangamranganath@study.thws.de)
     @brief Program to detect the taskboard
     @version 0.1
-    @date 2023-03-29
 
-    @copyright Copyright (c) 2023
+    @copyright Copyright (c) 2024
 '''
 import rospy
 import cv2
