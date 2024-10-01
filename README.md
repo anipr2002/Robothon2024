@@ -41,11 +41,8 @@ Optional:
             - CY: 0mm
             - CZ: 59mm
 
-## Installing Dependencies
-### Json support
-`sudo apt install nlohmann-json3-dev`
-### cgal
-`sudo apt install libcgal-dev`
+## Software Dependencies
+### ROS Noetic
 ### ur_rtde
 https://sdurobotics.gitlab.io/ur_rtde/installation/installation.html#linux-ubuntu-and-macos
 ```
@@ -58,6 +55,30 @@ cd build
 cmake -DCMAKE_INSTALL_PREFIX=/usr ..
 make -j
 sudo make install
+```
+### realsense-ros
+```
+git clone https://github.com/IntelRealSense/realsense-ros.git
+```
+### IDS-peak
+```
+https://en.ids-imaging.com/downloads.html
+```
+### OpenCV
+```
+sudo apt install libopencv-dev python3-opencv
+```
+### JSON support
+```
+sudo apt install nlohmann-json3-dev
+```
+### CGAL
+```
+sudo apt install libcgal-dev
+```
+### Eigen
+```
+eigen.tuxfamily.org
 ```
 
 ## Starting the System
