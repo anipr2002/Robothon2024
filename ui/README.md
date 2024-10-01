@@ -7,7 +7,6 @@ This guide outlines how to integrate a **Next.js** application with **ROS (Robot
 - Real-time communication with ROS via ROSBridge
 - Web-based interface using `Next.js` for interacting with ROS topics, services, and parameters
 - Integration with `roslibjs` for easy access to ROS functionality in the frontend
-- Scalable architecture for building complex robotics web applications
 
 ## Prerequisites
 
@@ -24,8 +23,8 @@ Before you begin, ensure you have the following installed:
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/your-username/ros-bridge-nextjs.git
-cd ros-bridge-nextjs
+git clone https://github.com/anipr2002/robothon2024
+cd ui/Robothon-UI
 npm install
 ```
 
@@ -53,22 +52,16 @@ Replace `<your-ros-distro>` with your ROS distribution (e.g., noetic, melodic).
 
 Create a custom launch file to start both ROSBridge and ROSAPI nodes:
 
-1. Navigate to your ROS workspace:
-   ```bash
-   cd ~/catkin_ws/src
-   mkdir -p my_launch_files/launch
-   touch my_launch_files/launch/rosbridge_with_rosapi.launch
-   ```
-
-2. Add the following to the `rosbridge_with_rosapi.launch` file:
+1. Add the following to the `launch` file:
 
    ```xml
    <launch>
      <!-- Start ROSBridge WebSocket server -->
-     <node pkg="rosbridge_server" type="rosbridge_websocket" name="rosbridge_websocket" />
+     <node name="rosbridge_websocket" pkg="rosbridge_server" type="rosbridge_websocket" output="screen">
+    <param name="port" value="9090" />
+     </node>
 
-     <!-- Start ROSAPI -->
-     <node pkg="rosapi" type="rosapi_node" name="rosapi" />
+     <node name="rosapi" pkg="rosapi" type="rosapi_node" output="screen" />
 
      <!-- Add any custom ROS nodes here -->
      <!-- Example of custom node -->
@@ -76,7 +69,7 @@ Create a custom launch file to start both ROSBridge and ROSAPI nodes:
    </launch>
    ```
 
-3. Launch the ROSBridge and ROSAPI nodes:
+2. Launch the ROSBridge and ROSAPI nodes:
 
    ```bash
    roslaunch my_launch_files rosbridge_with_rosapi.launch
